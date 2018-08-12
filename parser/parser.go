@@ -11,6 +11,7 @@ type Parser interface {
 	KnownCommand(cmd string) bool
 	LearnCommand(cmd string)
 	LeadChar() string
+	IsCaseSensitive() bool
 }
 
 // ErrNotACommand TODOC
@@ -22,34 +23,48 @@ var ErrUnknownCommand = errors.New("unknown command")
 type parser struct {
 	CmdIndicator  string
 	knownCommands map[string]bool
+	caseSensitive bool
 }
 
 // Options TODOC
 type Options struct {
 	CmdIndicator  string
 	KnownCommands []string
+	CaseSensitive bool
 }
 
 // NewParser TODOC
 func NewParser(opts Options) Parser {
-	p := parser{
+	p := &parser{
 		CmdIndicator:  opts.CmdIndicator,
 		knownCommands: map[string]bool{},
+		caseSensitive: opts.CaseSensitive,
 	}
 
 	for _, cmd := range opts.KnownCommands {
-		p.knownCommands[cmd] = true
+		p.LearnCommand(cmd)
 	}
-	return &p
+	return p
+}
+
+// IsCaseSensitive TODOC
+func (p *parser) IsCaseSensitive() bool {
+	return p.caseSensitive
 }
 
 // KnownCommand TODOC
 func (p *parser) KnownCommand(cmd string) bool {
-	return p.knownCommands[cmd]
+	if p.caseSensitive {
+		return p.knownCommands[cmd]
+	}
+	return p.knownCommands[strings.ToLower(cmd)]
 }
 
 func (p *parser) LearnCommand(cmd string) {
-	p.knownCommands[cmd] = true
+	if p.caseSensitive {
+		p.knownCommands[cmd] = true
+	}
+	p.knownCommands[strings.ToLower(cmd)] = true
 }
 
 // LeadChar returns the character that identifies commands
@@ -81,7 +96,7 @@ func (p *parser) ParseCommand(line string) (cmd string, rest string, err error) 
 			cmd = line[1:i]
 			rest = line[i:]
 
-			if known := p.knownCommands[cmd]; known {
+			if p.KnownCommand(cmd) {
 				return
 			}
 		}
@@ -89,7 +104,7 @@ func (p *parser) ParseCommand(line string) (cmd string, rest string, err error) 
 
 	cmd = line[1:]
 	rest = line[0:0]
-	if known := p.knownCommands[cmd]; !known {
+	if !p.KnownCommand(cmd) {
 		err = ErrUnknownCommand
 	}
 	return
