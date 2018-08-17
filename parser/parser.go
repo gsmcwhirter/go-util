@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-// Parser TODOC
+// Parser is an interface describing a repl/text interface command parser
 type Parser interface {
 	ParseCommand(line string) (cmd string, rest string, err error)
 	KnownCommand(cmd string) bool
@@ -14,10 +14,12 @@ type Parser interface {
 	IsCaseSensitive() bool
 }
 
-// ErrNotACommand TODOC
+// ErrNotACommand is the error returned when the string to be parsed does not
+// represent a command syntactically
 var ErrNotACommand = errors.New("not a command")
 
-// ErrUnknownCommand TODOC
+// ErrUnknownCommand is the error returned when the string to be parsed is a command
+// syntactically but that command is not registered
 var ErrUnknownCommand = errors.New("unknown command")
 
 type parser struct {
@@ -26,14 +28,18 @@ type parser struct {
 	caseSensitive bool
 }
 
-// Options TODOC
+// Options specifies options when constructing a new Parser
+//
+// - CmdIndicator is the string that all commands must be prefixed with (e.g., "!" or "/")
+// - KnownCommands is a list of commands that should be recognized (expanded with LearnCommand)
+// - CaseSensitive will make the parser case-sensitive when determining if it knows about a command
 type Options struct {
 	CmdIndicator  string
 	KnownCommands []string
 	CaseSensitive bool
 }
 
-// NewParser TODOC
+// NewParser constructs a new Parser
 func NewParser(opts Options) Parser {
 	p := &parser{
 		CmdIndicator:  opts.CmdIndicator,
@@ -47,12 +53,12 @@ func NewParser(opts Options) Parser {
 	return p
 }
 
-// IsCaseSensitive TODOC
+// IsCaseSensitive reports whether the parser is case-sensitive or not
 func (p *parser) IsCaseSensitive() bool {
 	return p.caseSensitive
 }
 
-// KnownCommand TODOC
+// KnownCommand reports whether the parser knows about a command or not
 func (p *parser) KnownCommand(cmd string) bool {
 	if p.caseSensitive {
 		return p.knownCommands[cmd]
@@ -60,6 +66,8 @@ func (p *parser) KnownCommand(cmd string) bool {
 	return p.knownCommands[strings.ToLower(cmd)]
 }
 
+// LearnCommand adds the command to the parser's list of known commands if it
+// is not already present
 func (p *parser) LearnCommand(cmd string) {
 	if p.caseSensitive {
 		p.knownCommands[cmd] = true
@@ -72,6 +80,7 @@ func (p *parser) LeadChar() string {
 	return p.CmdIndicator
 }
 
+// ParseCommand attempts to parse a user-entered string as a command
 func (p *parser) ParseCommand(line string) (cmd string, rest string, err error) {
 	if len(line) == 0 {
 		if p.CmdIndicator == "" && p.KnownCommand("") {
@@ -123,19 +132,30 @@ var digits = map[byte]bool{
 	'9': true,
 }
 
-// MaybeCount TODOC
+// MaybeCount attempts to split some text that might contain a "count" at the end
+//
+// Recognized "count" format is a string of digits, possibly preceded by an x, +, or -, preceeded by a space
 func MaybeCount(line string) (l string, c string) {
 	l = line
 
 	for i := len(line) - 1; i >= 0; i-- {
 		_, isDigit := digits[line[i]]
 		if !isDigit {
-			if line[i] == 'x' {
-				l = line[:i]
-				c = line[i+1:]
-			} else {
+			switch line[i] {
+			case ' ':
 				l = line[:i+1]
 				c = line[i+1:]
+			case 'x', '+', '-':
+				if i == 0 || line[i-1] != ' ' {
+					l = line
+					c = ""
+				} else {
+					l = line[:i]
+					c = line[i+1:]
+				}
+			default:
+				l = line
+				c = ""
 			}
 			return
 		}
