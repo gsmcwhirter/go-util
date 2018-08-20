@@ -1,3 +1,6 @@
+// Package cli is a light wrapper around the cobra argument parsing/command
+// library. The goal is to make it a bit easier to add examples and to limit
+// some options in the name of ease-of-use.
 package cli
 
 import (
