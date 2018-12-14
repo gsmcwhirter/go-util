@@ -7,7 +7,7 @@ import (
 
 // Parser is an interface describing a repl/text interface command parser
 type Parser interface {
-	ParseCommand(line string) (cmd string, rest string, err error)
+	ParseCommand(line string) (cmd string, err error)
 	KnownCommand(cmd string) bool
 	LearnCommand(cmd string)
 	LeadChar() string
@@ -71,6 +71,7 @@ func (p *parser) KnownCommand(cmd string) bool {
 func (p *parser) LearnCommand(cmd string) {
 	if p.caseSensitive {
 		p.knownCommands[cmd] = true
+		return
 	}
 	p.knownCommands[strings.ToLower(cmd)] = true
 }
@@ -81,41 +82,21 @@ func (p *parser) LeadChar() string {
 }
 
 // ParseCommand attempts to parse a user-entered string as a command
-func (p *parser) ParseCommand(line string) (cmd string, rest string, err error) {
-	if len(line) == 0 {
-		if p.CmdIndicator == "" && p.KnownCommand("") {
-			return "", line, nil
-		}
-
-		err = ErrNotACommand
-		return
-	}
-
+func (p *parser) ParseCommand(line string) (cmd string, err error) {
 	if !strings.HasPrefix(line, p.CmdIndicator) {
 		err = ErrNotACommand
 		return
 	}
 
-	for i := range line {
-		if i == 0 {
-			continue
-		}
-
-		if line[i] == ' ' {
-			cmd = line[1:i]
-			rest = line[i:]
-
-			if p.KnownCommand(cmd) {
-				return
-			}
-		}
-	}
-
-	cmd = line[1:]
-	rest = line[0:0]
+	cmd = strings.TrimPrefix(line, p.CmdIndicator)
 	if !p.KnownCommand(cmd) {
 		err = ErrUnknownCommand
 	}
+
+	if !p.IsCaseSensitive() {
+		cmd = strings.ToLower(cmd)
+	}
+
 	return
 }
 
@@ -145,13 +126,21 @@ func MaybeCount(line string) (l string, c string) {
 			case ' ':
 				l = line[:i+1]
 				c = line[i+1:]
-			case 'x', '+', '-':
-				if i == 0 || line[i-1] != ' ' {
+			case 'x', '+':
+				if i > 0 && line[i-1] != ' ' {
 					l = line
 					c = ""
 				} else {
 					l = line[:i]
 					c = line[i+1:]
+				}
+			case '-':
+				if i > 0 && line[i-1] != ' ' {
+					l = line
+					c = ""
+				} else {
+					l = line[:i]
+					c = line[i:]
 				}
 			default:
 				l = line
