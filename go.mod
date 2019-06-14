@@ -1,4 +1,4 @@
-module github.com/gsmcwhirter/go-util
+module github.com/gsmcwhirter/go-util/v2
 
 go 1.12
 
