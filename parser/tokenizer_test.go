@@ -10,7 +10,7 @@ func TestTokenize(t *testing.T) {
 		msg    string
 		delim  rune
 		escape rune
-		quot   rune
+		quot   []rune
 	}
 	tests := []struct {
 		name    string
@@ -24,7 +24,7 @@ func TestTokenize(t *testing.T) {
 				msg:    "test 1 2 3",
 				delim:  ' ',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{"test", "1", "2", "3"},
 			wantErr: false,
@@ -35,7 +35,7 @@ func TestTokenize(t *testing.T) {
 				msg:    "test 1 2 3",
 				delim:  '%',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{"test 1 2 3"},
 			wantErr: false,
@@ -46,7 +46,7 @@ func TestTokenize(t *testing.T) {
 				msg:    `test "1 2 3"`,
 				delim:  ' ',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{"test", "1 2 3"},
 			wantErr: false,
@@ -57,7 +57,7 @@ func TestTokenize(t *testing.T) {
 				msg:    `test \"1 2 3\"`,
 				delim:  ' ',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{`test`, `"1`, `2`, `3"`},
 			wantErr: false,
@@ -68,7 +68,7 @@ func TestTokenize(t *testing.T) {
 				msg:    `test "1 \"2 3"`,
 				delim:  ' ',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{`test`, `1 "2 3`},
 			wantErr: false,
@@ -79,7 +79,7 @@ func TestTokenize(t *testing.T) {
 				msg:    `test "1 2 3`,
 				delim:  ' ',
 				escape: '\\',
-				quot:   '"',
+				quot:   []rune{'"'},
 			},
 			want:    []string{`test`, `1 2 3`},
 			wantErr: true,

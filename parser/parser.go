@@ -82,10 +82,12 @@ func (p *parser) LeadChar() string {
 }
 
 // ParseCommand attempts to parse a user-entered string as a command
-func (p *parser) ParseCommand(line string) (cmd string, err error) {
+func (p *parser) ParseCommand(line string) (string, error) {
+	var cmd string
+	var err error
+
 	if !strings.HasPrefix(line, p.CmdIndicator) {
-		err = ErrNotACommand
-		return
+		return "", ErrNotACommand
 	}
 
 	cmd = strings.TrimPrefix(line, p.CmdIndicator)
@@ -97,7 +99,7 @@ func (p *parser) ParseCommand(line string) (cmd string, err error) {
 		cmd = strings.ToLower(cmd)
 	}
 
-	return
+	return cmd, err
 }
 
 var digits = map[byte]bool{
@@ -116,8 +118,9 @@ var digits = map[byte]bool{
 // MaybeCount attempts to split some text that might contain a "count" at the end
 //
 // Recognized "count" format is a string of digits, possibly preceded by an x, +, or -, preceeded by a space
-func MaybeCount(line string) (l string, c string) {
-	l = line
+func MaybeCount(line string) (string, string) {
+	l := line
+	c := ""
 
 	for i := len(line) - 1; i >= 0; i-- {
 		_, isDigit := digits[line[i]]
@@ -146,9 +149,9 @@ func MaybeCount(line string) (l string, c string) {
 				l = line
 				c = ""
 			}
-			return
+			return l, c
 		}
 	}
 
-	return
+	return l, c
 }
