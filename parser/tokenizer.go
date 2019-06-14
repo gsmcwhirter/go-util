@@ -21,7 +21,7 @@ func isQuote(char rune, quots []rune) bool {
 
 // Tokenize will split a string into delim-separated tokens, accounting for quoted
 // sections and escapes
-func Tokenize(msg string, delim rune, escape rune, quots []rune) ([]string, error) {
+func Tokenize(msg string, delim, escape rune, quots []rune) ([]string, error) {
 	msgR := []rune(msg)
 	max := strings.Count(msg, string(delim)) + 1
 	tokens := make([]string, 0, max)

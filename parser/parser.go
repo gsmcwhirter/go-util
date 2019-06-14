@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"errors"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 // Parser is an interface describing a repl/text interface command parser
