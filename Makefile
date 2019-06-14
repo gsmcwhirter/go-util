@@ -1,3 +1,4 @@
+PROJECT := github.com/gsmcwhirter/go-util
 
 # can specify V=1 on the line with `make` to get verbose output
 V ?= 0
@@ -19,8 +20,8 @@ test:  ## run go test
 	$Q GOPROXY=$(GOPROXY) go test ./...
 
 vet:  deps ## run various linters and vetters
-	$Q goimports -w -local github.com/gsmcwhirter/discord-bot-lib  .
-	$Q gofmt -s -w .
+	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do gofmt -s -w $$d/*.go; done'
+	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do goimports -w -local $(PROJECT) $$d/*.go; done'
 	$Q golangci-lint run -E golint,gosimple,staticcheck ./...
 	$Q golangci-lint run -E deadcode,depguard,errcheck,gocritic,gofmt,goimports,gosec,govet,ineffassign,nakedret,prealloc,structcheck,typecheck,unconvert,varcheck ./...
 
