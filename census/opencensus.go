@@ -14,6 +14,7 @@ import (
 )
 
 type View = view.View
+type ViewData = view.Data
 
 var CountView = view.Count
 var RegisterView = view.Register
@@ -25,6 +26,8 @@ type TagKey = tag.Key
 var NewTagKey = tag.NewKey
 var NewTag = tag.New
 var InsertTag = tag.Insert
+
+type SpanData = trace.SpanData
 
 var ErrBadExporter = errors.New("unsupported exporter")
 
