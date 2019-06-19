@@ -5,11 +5,25 @@ import (
 
 	"go.opencensus.io/stats"
 	"go.opencensus.io/stats/view"
+	"go.opencensus.io/tag"
 	"go.opencensus.io/trace"
 
 	"github.com/gsmcwhirter/go-util/v4/errors"
 	"github.com/gsmcwhirter/go-util/v4/logging"
 )
+
+type View = view.View
+
+var CountView = view.Count
+var RegisterView = view.Register
+
+var Int64 = stats.Int64
+
+type TagKey = tag.Key
+
+var NewTagKey = tag.NewKey
+var NewTag = tag.New
+var InsertTag = tag.Insert
 
 var ErrBadExporter = errors.New("unsupported exporter")
 
