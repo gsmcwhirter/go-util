@@ -76,13 +76,13 @@ func (c *OpenCensus) Flush() {
 func (c *OpenCensus) StartSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
 	ctx, span := trace.StartSpan(ctx, name)
 
-	attributes := make([]trace.Attribute, 0, len(keyvals)/2 + 1)
+	attributes := make([]trace.Attribute, 0, len(keyvals)/2+1)
 
 	if rid, ok := request.GetRequestID(ctx); ok {
 		attributes = append(attributes, trace.StringAttribute("request_id", rid))
 	}
 
-	for i := 0; i < len(keyvals) - 1; i += 2 {
+	for i := 0; i < len(keyvals)-1; i += 2 {
 		attributes = append(attributes, trace.StringAttribute(keyvals[i], keyvals[i+1]))
 	}
 
