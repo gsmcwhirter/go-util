@@ -10,6 +10,7 @@ import (
 
 	"github.com/gsmcwhirter/go-util/v4/errors"
 	"github.com/gsmcwhirter/go-util/v4/logging"
+	"github.com/gsmcwhirter/go-util/v4/request"
 )
 
 type View = view.View
@@ -73,7 +74,13 @@ func (c *OpenCensus) Flush() {
 }
 
 func (c *OpenCensus) StartSpan(ctx context.Context, name string) (context.Context, *trace.Span) {
-	return trace.StartSpan(ctx, name)
+	ctx, span := trace.StartSpan(ctx, name)
+
+	if rid, ok := request.GetRequestID(ctx); ok {
+		span.AddAttributes(trace.StringAttribute("request_id", rid))
+	}
+
+	return ctx, span
 }
 
 func (c *OpenCensus) Record(ctx context.Context, ms ...stats.Measurement) {
