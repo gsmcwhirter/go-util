@@ -17,7 +17,7 @@ import (
 var DefaultTimestampUTC = log.DefaultTimestampUTC
 
 // DefaultCaller is an alternative to the go-kit object of the same name to account for wrapping
-var DefaultCaller = log.Caller(4)
+var DefaultCaller = log.Caller(6)
 
 // Logger is the extended logging interface for the corvee applications
 type Logger interface {
