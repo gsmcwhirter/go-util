@@ -15,5 +15,6 @@ require (
 	github.com/stretchr/testify v1.3.0 // indirect
 	go.opencensus.io v0.22.0
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
-	golang.org/x/tools v0.0.0-20190619215442-4adf7a708c2d
+	golang.org/x/tools v0.0.0-20190620191750-1fa568393b23
+	google.golang.org/appengine v1.4.0 // indirect
 )

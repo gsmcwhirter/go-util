@@ -1,4 +1,4 @@
-package census
+package stats
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 	"go.opencensus.io/trace"
 
 	"github.com/gsmcwhirter/go-util/v4/errors"
-	"github.com/gsmcwhirter/go-util/v4/logging"
 	"github.com/gsmcwhirter/go-util/v4/request"
 )
 
@@ -19,23 +18,26 @@ type ViewData = view.Data
 var CountView = view.Count
 var RegisterView = view.Register
 
+type Measurement = stats.Measurement
+
 var Int64 = stats.Int64
 
 type TagKey = tag.Key
 
 var NewTagKey = tag.NewKey
-var NewTag = tag.New
-var InsertTag = tag.Insert
+var MustNewTagKey = tag.MustNewKey
 
 type SpanData = trace.SpanData
 
-var ErrBadExporter = errors.New("unsupported exporter")
+// ErrNoMeasurements is the error from Census.Record when no measurements were provided
+var ErrNoMeasurements = errors.New("no measurements provided")
 
-type dependencies interface {
-	Logger() logging.Logger
+type Tag struct {
+	Key TagKey
+	Val string
 }
 
-type OpenCensus struct {
+type Census struct {
 	statsExporter view.Exporter
 	statsFlush    func(view.Exporter)
 	traceExporter trace.Exporter
@@ -50,8 +52,8 @@ type Options struct {
 	TraceProbability   float64
 }
 
-func NewCensus(deps dependencies, opts Options) *OpenCensus {
-	c := &OpenCensus{
+func NewCensus(opts Options) *Census {
+	c := &Census{
 		statsExporter: opts.StatsExporter,
 		statsFlush:    opts.StatsExporterFlush,
 		traceExporter: opts.TraceExporter,
@@ -66,7 +68,7 @@ func NewCensus(deps dependencies, opts Options) *OpenCensus {
 	return c
 }
 
-func (c *OpenCensus) Flush() {
+func (c *Census) Flush() {
 	if c.statsFlush != nil {
 		c.statsFlush(c.statsExporter)
 	}
@@ -76,7 +78,7 @@ func (c *OpenCensus) Flush() {
 	}
 }
 
-func (c *OpenCensus) StartSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
+func (c *Census) StartSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
 	ctx, span := trace.StartSpan(ctx, name)
 
 	attributes := make([]trace.Attribute, 0, len(keyvals)/2+1)
@@ -96,6 +98,20 @@ func (c *OpenCensus) StartSpan(ctx context.Context, name string, keyvals ...stri
 	return ctx, span
 }
 
-func (c *OpenCensus) Record(ctx context.Context, ms ...stats.Measurement) {
-	stats.Record(ctx, ms...)
+func (c *Census) Record(ctx context.Context, ms []Measurement, tags ...Tag) error {
+	if len(ms) == 0 {
+		return ErrNoMeasurements
+	}
+
+	muts := make([]tag.Mutator, 0, len(tags))
+	for _, t := range tags {
+		muts = append(muts, tag.Upsert(t.Key, t.Val))
+	}
+
+	opts := []stats.Options{
+		stats.WithMeasurements(ms...),
+		stats.WithTags(muts...),
+	}
+
+	return stats.RecordWithOptions(ctx, opts...)
 }

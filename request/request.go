@@ -17,7 +17,13 @@ func NewRequestContext() context.Context {
 // NewRequestContextFrom creates a new request context from an existing context
 // regenerating a request_id value
 func NewRequestContextFrom(ctx context.Context) context.Context {
-	return context.WithValue(ctx, ContextKey("request_id"), GenerateRequestID())
+	return NewRequestContextWithRequestID(ctx, GenerateRequestID())
+}
+
+// NewRequestContextWithRequestID creates a new request context from an existing context
+// with the provided request id rid
+func NewRequestContextWithRequestID(ctx context.Context, rid string) context.Context {
+	return context.WithValue(ctx, ContextKey("request_id"), rid)
 }
 
 // GenerateRequestID generates a new random-enough request id for a request context
