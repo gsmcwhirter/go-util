@@ -7,13 +7,13 @@ import (
 )
 
 func Debug(logger logging.Logger) logging.Logger {
-	return logging.NewFromKitLogger(level.Debug(logger))
+	return logging.NewFrom(level.Debug(logging.BaseFrom(logger)))
 }
 
 func Info(logger logging.Logger) logging.Logger {
-	return logging.NewFromKitLogger(level.Info(logger))
+	return logging.NewFrom(level.Info(logging.BaseFrom(logger)))
 }
 
 func Error(logger logging.Logger) logging.Logger {
-	return logging.NewFromKitLogger(level.Error(logger))
+	return logging.NewFrom(level.Error(logging.BaseFrom(logger)))
 }
