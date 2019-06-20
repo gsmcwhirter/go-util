@@ -59,9 +59,9 @@ func TestNewRequestContextFrom(t *testing.T) {
 
 func TestGetRequestID(t *testing.T) {
 	tests := []struct {
-		name  string
+		name   string
 		origID string
-		want  string
+		want   string
 		wantOk bool
 	}{
 		{

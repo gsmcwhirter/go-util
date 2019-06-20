@@ -1,4 +1,4 @@
-module github.com/gsmcwhirter/go-util/v4
+module github.com/gsmcwhirter/go-util/v5
 
 go 1.12
 
@@ -16,5 +16,4 @@ require (
 	go.opencensus.io v0.22.0
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/tools v0.0.0-20190620191750-1fa568393b23
-	google.golang.org/appengine v1.4.0 // indirect
 )
