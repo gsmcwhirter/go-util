@@ -29,7 +29,7 @@ var MustNewTagKey = tag.MustNewKey
 
 type SpanData = trace.SpanData
 
-type StringAttribute = trace.Attribute
+type StringAttribute = trace.StringAttribute
 
 // ErrNoMeasurements is the error from Census.Record when no measurements were provided
 var ErrNoMeasurements = errors.New("no measurements provided")
