@@ -3,6 +3,8 @@ package logging
 import (
 	"context"
 	"fmt"
+	"io"
+	stdLog "log" //nolint:depguard
 	"net/http"
 	"os"
 
@@ -142,4 +144,13 @@ func WithRequest(req *http.Request, l Logger, keyvals ...interface{}) Logger {
 	)
 
 	return WithContext(req.Context(), l, keyvals...)
+}
+
+// PatchStdLib sets up the stdlib global logger to run through the provided one instead
+func PatchStdLib(l Logger) {
+	var w io.Writer
+	w = writer{l}
+
+	stdLog.SetOutput(w)
+	stdLog.SetFlags(0)
 }

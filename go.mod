@@ -16,5 +16,4 @@ require (
 	go.opencensus.io v0.22.0
 	golang.org/x/sync v0.0.0-20190423024810-112230192c58
 	golang.org/x/tools v0.0.0-20190621195816-6e04913cbbac
-	google.golang.org/appengine v1.4.0 // indirect
 )
