@@ -6,7 +6,7 @@ import (
 )
 
 type Error interface {
-	error
+	Error() string
 	Cause() error
 	Msg() string
 	Data() []interface{}
@@ -47,8 +47,13 @@ func (e *errStruct) addDetails(data []interface{}) {
 }
 
 type wrappedErr struct {
-	errStruct
+	msg   string
+	data  []interface{}
 	cause error
+}
+
+func (e *wrappedErr) addDetails(data []interface{}) {
+	e.data = append(e.data, data...)
 }
 
 func (e *wrappedErr) Error() string {
@@ -72,8 +77,29 @@ func (e *wrappedErr) Error() string {
 	return e.msg + ": " + ret
 }
 
+func (e *wrappedErr) Msg() string {
+	msg := ""
+	if e.msg != "" {
+		msg += e.msg + ": "
+	}
+
+	if e2, ok := e.cause.(Error); ok {
+		msg += e2.Msg()
+	} else {
+		msg += e.cause.Error()
+	}
+
+	fmt.Printf("'%v'\n", msg)
+
+	return msg
+}
+
 func (e *wrappedErr) Cause() error {
 	return e.cause
+}
+
+func (e *wrappedErr) Data() []interface{} {
+	return e.data
 }
 
 func formatData(data []interface{}) string {
@@ -102,8 +128,9 @@ func Wrap(err error, msg string, data ...interface{}) error {
 	}
 
 	return &wrappedErr{
-		errStruct: errStruct{msg, data},
-		cause:     err,
+		msg:   msg,
+		data:  data,
+		cause: err,
 	}
 }
 

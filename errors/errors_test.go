@@ -322,8 +322,9 @@ func Test_wrappedErr_Error(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &wrappedErr{
-				errStruct: tt.fields.errStruct,
-				cause:     tt.fields.cause,
+				msg:   tt.fields.errStruct.msg,
+				data:  tt.fields.errStruct.data,
+				cause: tt.fields.cause,
 			}
 			if got := e.Error(); got != tt.want {
 				t.Errorf("wrappedErr.Error() = %v, want %v", got, tt.want)
@@ -392,8 +393,9 @@ func Test_wrappedErr_Cause(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &wrappedErr{
-				errStruct: tt.fields.errStruct,
-				cause:     tt.fields.cause,
+				msg:   tt.fields.errStruct.msg,
+				data:  tt.fields.errStruct.data,
+				cause: tt.fields.cause,
 			}
 			if err := e.Cause(); err != tt.want {
 				t.Errorf("wrappedErr.Cause() error = %v, wantErr %v", err, tt.want)
@@ -500,8 +502,9 @@ func TestWrap(t *testing.T) {
 				data: []interface{}{"foo", "bar"},
 			},
 			want: &wrappedErr{
-				errStruct{"test", []interface{}{"foo", "bar"}},
-				testErr,
+				msg:   "test",
+				data:  []interface{}{"foo", "bar"},
+				cause: testErr,
 			},
 		},
 		{
@@ -512,8 +515,9 @@ func TestWrap(t *testing.T) {
 				data: []interface{}{"foo", "bar"},
 			},
 			want: &wrappedErr{
-				errStruct{"test", []interface{}{"foo", "bar"}},
-				testData,
+				msg:   "test",
+				data:  []interface{}{"foo", "bar"},
+				cause: testData,
 			},
 		},
 		{
@@ -524,8 +528,9 @@ func TestWrap(t *testing.T) {
 				data: []interface{}{"foo", "bar", "baz"},
 			},
 			want: &wrappedErr{
-				errStruct{"test", []interface{}{"foo", "bar", "baz", ""}},
-				testErr,
+				msg:   "test",
+				data:  []interface{}{"foo", "bar", "baz", ""},
+				cause: testErr,
 			},
 		},
 	}
@@ -566,8 +571,9 @@ func TestWithDetails(t *testing.T) {
 				data: []interface{}{"foo", "bar"},
 			},
 			want: &wrappedErr{
-				errStruct{"", []interface{}{"foo", "bar"}},
-				testErr,
+				msg:   "",
+				data:  []interface{}{"foo", "bar"},
+				cause: testErr,
 			},
 		},
 		{
@@ -585,8 +591,9 @@ func TestWithDetails(t *testing.T) {
 				data: []interface{}{"foo", "bar", "baz"},
 			},
 			want: &wrappedErr{
-				errStruct{"", []interface{}{"foo", "bar", "baz", ""}},
-				testErr,
+				msg:   "",
+				data:  []interface{}{"foo", "bar", "baz", ""},
+				cause: testErr,
 			},
 		},
 	}
@@ -594,6 +601,129 @@ func TestWithDetails(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := WithDetails(tt.args.err, tt.args.data...); !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("WithDetails() error = %v, wantErr %v", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestWithDetailsMsg(t *testing.T) {
+	testErr := errors.New("cause")
+	testData := WithDetails(New("cause"), "quux", "foobar")
+
+	type args struct {
+		err  error
+		msg  string
+		data []interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "basic error",
+			args: args{
+				err:  testErr,
+				data: []interface{}{"foo", "bar"},
+			},
+			want: "cause",
+		},
+		{
+			name: "data error",
+			args: args{
+				err:  testData,
+				data: []interface{}{"foo", "bar"},
+			},
+			want: "cause",
+		},
+		{
+			name: "bad parity",
+			args: args{
+				err:  testErr,
+				data: []interface{}{"foo", "bar", "baz"},
+			},
+			want: "cause",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := WithDetails(tt.args.err, tt.args.data...)
+			if err == nil {
+				t.Errorf("WithDetails() returned nil")
+				return
+			}
+
+			e, ok := err.(Error)
+			if !ok {
+				t.Errorf("Wrap() returned a non-Error")
+				return
+			}
+
+			if msg := e.Msg(); !reflect.DeepEqual(msg, tt.want) {
+				t.Errorf("Msg() error = %v, wantErr %v", err, tt.want)
+			}
+		})
+	}
+}
+
+func TestWrappedMsg(t *testing.T) {
+	testErr := errors.New("cause")
+	testData := WithDetails(New("cause"), "quux", "foobar")
+
+	type args struct {
+		err  error
+		msg  string
+		data []interface{}
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "basic error",
+			args: args{
+				err:  testErr,
+				msg:  "test",
+				data: []interface{}{"foo", "bar"},
+			},
+			want: "test: cause",
+		},
+		{
+			name: "data error",
+			args: args{
+				err:  testData,
+				msg:  "test",
+				data: []interface{}{"foo", "bar"},
+			},
+			want: "test: cause",
+		},
+		{
+			name: "bad parity",
+			args: args{
+				err:  testErr,
+				msg:  "test",
+				data: []interface{}{"foo", "bar", "baz"},
+			},
+			want: "test: cause",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := Wrap(tt.args.err, tt.args.msg, tt.args.data...)
+			if err == nil {
+				t.Errorf("Wrap() returned nil")
+				return
+			}
+
+			e, ok := err.(Error)
+			if !ok {
+				t.Errorf("Wrap() returned a non-Error")
+				return
+			}
+
+			if msg := e.Msg(); !reflect.DeepEqual(msg, tt.want) {
+				t.Errorf("Msg() = %v, want = %v", msg, tt.want)
 			}
 		})
 	}
