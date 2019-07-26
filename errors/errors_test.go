@@ -612,7 +612,6 @@ func TestWithDetailsMsg(t *testing.T) {
 
 	type args struct {
 		err  error
-		msg  string
 		data []interface{}
 	}
 	tests := []struct {

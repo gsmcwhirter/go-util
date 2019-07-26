@@ -1,4 +1,4 @@
-package stats
+package telemetry
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"go.opencensus.io/tag"
 	"go.opencensus.io/trace"
 
-	"github.com/gsmcwhirter/go-util/v5/errors"
-	"github.com/gsmcwhirter/go-util/v5/request"
+	"github.com/gsmcwhirter/go-util/v6/errors"
+	"github.com/gsmcwhirter/go-util/v6/request"
 )
 
 type View = view.View

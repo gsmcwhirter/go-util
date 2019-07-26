@@ -11,8 +11,8 @@ import (
 	"github.com/go-kit/kit/log"       //nolint:depguard
 	"github.com/go-kit/kit/log/level" //nolint:depguard
 
-	"github.com/gsmcwhirter/go-util/v5/errors"
-	"github.com/gsmcwhirter/go-util/v5/request"
+	"github.com/gsmcwhirter/go-util/v6/errors"
+	"github.com/gsmcwhirter/go-util/v6/request"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name
@@ -148,8 +148,7 @@ func WithRequest(req *http.Request, l Logger, keyvals ...interface{}) Logger {
 
 // PatchStdLib sets up the stdlib global logger to run through the provided one instead
 func PatchStdLib(l Logger) {
-	var w io.Writer
-	w = writer{l}
+	var w io.Writer = writer{l}
 
 	stdLog.SetOutput(w)
 	stdLog.SetFlags(0)
