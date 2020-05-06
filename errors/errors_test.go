@@ -86,7 +86,7 @@ func Test_errStruct_Error(t *testing.T) {
 	}
 }
 
-func Test_errStruct_Cause(t *testing.T) {
+func Test_errStruct_Unwrap(t *testing.T) {
 	type fields struct {
 		msg  string
 		data []interface{}
@@ -119,8 +119,8 @@ func Test_errStruct_Cause(t *testing.T) {
 				msg:  tt.fields.msg,
 				data: tt.fields.data,
 			}
-			if err := e.Cause(); err != tt.want {
-				t.Errorf("errStruct.Cause() error = %v, want %v", err, tt.want)
+			if err := e.Unwrap(); err != tt.want {
+				t.Errorf("errStruct.Unwrap() error = %v, want %v", err, tt.want)
 			}
 		})
 	}
@@ -228,7 +228,7 @@ func Test_errStruct_addDetails(t *testing.T) {
 	}
 }
 
-func Test_wrappedErr_Error(t *testing.T) {
+func Test_wrapped_Error(t *testing.T) {
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 
@@ -241,28 +241,6 @@ func Test_wrappedErr_Error(t *testing.T) {
 		fields fields
 		want   string
 	}{
-		{
-			name: "nil cause basic",
-			fields: fields{
-				errStruct: errStruct{
-					msg:  "test",
-					data: nil,
-				},
-				cause: nil,
-			},
-			want: "test: (unknown error -- nil cause)",
-		},
-		{
-			name: "nil cause with data",
-			fields: fields{
-				errStruct: errStruct{
-					msg:  "test",
-					data: []interface{}{"foo", "bar", "baz", 1},
-				},
-				cause: nil,
-			},
-			want: "test: (unknown error -- nil cause) foo=bar baz=1",
-		},
 		{
 			name: "cause basic",
 			fields: fields{
@@ -321,19 +299,19 @@ func Test_wrappedErr_Error(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := &wrappedErr{
+			e := &errStruct{
 				msg:   tt.fields.errStruct.msg,
 				data:  tt.fields.errStruct.data,
 				cause: tt.fields.cause,
 			}
 			if got := e.Error(); got != tt.want {
-				t.Errorf("wrappedErr.Error() = %v, want %v", got, tt.want)
+				t.Errorf("errStruct.Error() = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func Test_wrappedErr_Cause(t *testing.T) {
+func Test_wrapped_Unwrap(t *testing.T) {
 	var c = errors.New("test")
 
 	type fields struct {
@@ -392,13 +370,13 @@ func Test_wrappedErr_Cause(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := &wrappedErr{
+			e := &errStruct{
 				msg:   tt.fields.errStruct.msg,
 				data:  tt.fields.errStruct.data,
 				cause: tt.fields.cause,
 			}
-			if err := e.Cause(); err != tt.want {
-				t.Errorf("wrappedErr.Cause() error = %v, wantErr %v", err, tt.want)
+			if err := e.Unwrap(); err != tt.want {
+				t.Errorf("errStruct.Unwrap() error = %v, wantErr %v", err, tt.want)
 			}
 		})
 	}
@@ -501,7 +479,7 @@ func TestWrap(t *testing.T) {
 				msg:  "test",
 				data: []interface{}{"foo", "bar"},
 			},
-			want: &wrappedErr{
+			want: &errStruct{
 				msg:   "test",
 				data:  []interface{}{"foo", "bar"},
 				cause: testErr,
@@ -514,7 +492,7 @@ func TestWrap(t *testing.T) {
 				msg:  "test",
 				data: []interface{}{"foo", "bar"},
 			},
-			want: &wrappedErr{
+			want: &errStruct{
 				msg:   "test",
 				data:  []interface{}{"foo", "bar"},
 				cause: testData,
@@ -527,7 +505,7 @@ func TestWrap(t *testing.T) {
 				msg:  "test",
 				data: []interface{}{"foo", "bar", "baz"},
 			},
-			want: &wrappedErr{
+			want: &errStruct{
 				msg:   "test",
 				data:  []interface{}{"foo", "bar", "baz", ""},
 				cause: testErr,
@@ -570,7 +548,7 @@ func TestWithDetails(t *testing.T) {
 				err:  testErr,
 				data: []interface{}{"foo", "bar"},
 			},
-			want: &wrappedErr{
+			want: &errStruct{
 				msg:   "",
 				data:  []interface{}{"foo", "bar"},
 				cause: testErr,
@@ -582,7 +560,7 @@ func TestWithDetails(t *testing.T) {
 				err:  testData,
 				data: []interface{}{"foo", "bar"},
 			},
-			want: &errStruct{"cause", []interface{}{"quux", "foobar", "foo", "bar"}},
+			want: &errStruct{"cause", []interface{}{"quux", "foobar", "foo", "bar"}, nil},
 		},
 		{
 			name: "bad parity",
@@ -590,7 +568,7 @@ func TestWithDetails(t *testing.T) {
 				err:  testErr,
 				data: []interface{}{"foo", "bar", "baz"},
 			},
-			want: &wrappedErr{
+			want: &errStruct{
 				msg:   "",
 				data:  []interface{}{"foo", "bar", "baz", ""},
 				cause: testErr,
@@ -659,7 +637,7 @@ func TestWithDetailsMsg(t *testing.T) {
 			}
 
 			if msg := e.Msg(); !reflect.DeepEqual(msg, tt.want) {
-				t.Errorf("Msg() error = %v, wantErr %v", err, tt.want)
+				t.Errorf("Msg() error = %v, wantErr %v", e.Msg(), tt.want)
 			}
 		})
 	}

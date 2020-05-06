@@ -5,9 +5,11 @@ import (
 	"strings"
 )
 
+// Error is our custom error type that allows wrapping errors with additional data.
+// It should be go 1.13 compatible, implementing Unwrap (formerly Cause)
 type Error interface {
 	Error() string
-	Cause() error
+	Unwrap() error
 	Msg() string
 	Data() []interface{}
 }
@@ -18,24 +20,56 @@ type internalError interface {
 }
 
 type errStruct struct {
-	msg  string
-	data []interface{}
+	msg   string
+	data  []interface{}
+	cause error
 }
 
 func (e *errStruct) Msg() string {
-	return e.msg
+	var msg string
+
+	if e.msg != "" {
+		msg = e.msg
+
+		if e.cause != nil {
+			msg += ": "
+		}
+	}
+
+	if e2, ok := e.cause.(Error); ok {
+		msg += e2.Msg()
+	} else if e.cause != nil {
+		msg += e.cause.Error()
+	}
+
+	return msg
 }
 
 func (e *errStruct) Error() string {
-	if len(e.data) > 0 {
-		return e.msg + " " + formatData(e.data)
+	var ret string
+
+	if e.cause != nil {
+		ret = e.cause.Error()
+
+		if e.msg != "" {
+			ret = ": " + ret
+		}
 	}
 
-	return e.msg
+	data := e.Data()
+	if len(data) > 0 {
+		ret += " " + formatData(data)
+	}
+
+	if e.msg == "" {
+		return ret
+	}
+
+	return e.msg + ret
 }
 
-func (e *errStruct) Cause() error {
-	return nil
+func (e *errStruct) Unwrap() error {
+	return e.cause
 }
 
 func (e *errStruct) Data() []interface{} {
@@ -44,62 +78,6 @@ func (e *errStruct) Data() []interface{} {
 
 func (e *errStruct) addDetails(data []interface{}) {
 	e.data = append(e.data, data...)
-}
-
-type wrappedErr struct {
-	msg   string
-	data  []interface{}
-	cause error
-}
-
-func (e *wrappedErr) addDetails(data []interface{}) {
-	e.data = append(e.data, data...)
-}
-
-func (e *wrappedErr) Error() string {
-	var ret string
-
-	if e.cause == nil {
-		e.cause = New("(unknown error -- nil cause)")
-	}
-
-	data := e.Data()
-	if len(data) > 0 {
-		ret = e.cause.Error() + " " + formatData(data)
-	} else {
-		ret = e.cause.Error()
-	}
-
-	if e.msg == "" {
-		return ret
-	}
-
-	return e.msg + ": " + ret
-}
-
-func (e *wrappedErr) Msg() string {
-	msg := ""
-	if e.msg != "" {
-		msg += e.msg + ": "
-	}
-
-	if e2, ok := e.cause.(Error); ok {
-		msg += e2.Msg()
-	} else {
-		msg += e.cause.Error()
-	}
-
-	fmt.Printf("'%v'\n", msg)
-
-	return msg
-}
-
-func (e *wrappedErr) Cause() error {
-	return e.cause
-}
-
-func (e *wrappedErr) Data() []interface{} {
-	return e.data
 }
 
 func formatData(data []interface{}) string {
@@ -113,8 +91,9 @@ func formatData(data []interface{}) string {
 
 func New(msg string) error {
 	return &errStruct{
-		msg:  msg,
-		data: nil,
+		msg:   msg,
+		data:  nil,
+		cause: nil,
 	}
 }
 
@@ -127,7 +106,7 @@ func Wrap(err error, msg string, data ...interface{}) error {
 		data = append(data, "")
 	}
 
-	return &wrappedErr{
+	return &errStruct{
 		msg:   msg,
 		data:  data,
 		cause: err,

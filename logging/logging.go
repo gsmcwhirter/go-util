@@ -11,8 +11,8 @@ import (
 	"github.com/go-kit/kit/log"       //nolint:depguard
 	"github.com/go-kit/kit/log/level" //nolint:depguard
 
-	"github.com/gsmcwhirter/go-util/v6/errors"
-	"github.com/gsmcwhirter/go-util/v6/request"
+	"github.com/gsmcwhirter/go-util/v7/errors"
+	"github.com/gsmcwhirter/go-util/v7/request"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name

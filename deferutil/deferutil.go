@@ -10,7 +10,9 @@ import (
 func CheckDefer(fs ...func() error) {
 	for i := len(fs) - 1; i >= 0; i-- {
 		if err := fs[i](); err != nil {
-			_, _ = fmt.Fprintf(os.Stderr, "Error in defer: %s\n", err)
+			if _, lastResortErr := fmt.Fprintf(os.Stderr, "Error in defer: %s\n", err); lastResortErr != nil {
+				panic(lastResortErr)
+			}
 		}
 	}
 }

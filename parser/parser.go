@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/gsmcwhirter/go-util/v6/errors"
+	"github.com/gsmcwhirter/go-util/v7/errors"
 )
 
 // Parser is an interface describing a repl/text interface command parser
