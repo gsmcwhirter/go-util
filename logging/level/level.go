@@ -1,7 +1,7 @@
 package level
 
 import (
-	"github.com/go-kit/kit/log/level" //nolint:depguard
+	"github.com/go-kit/kit/log/level" //nolint:depguard // used to implement levels
 
 	"github.com/gsmcwhirter/go-util/v7/logging"
 )

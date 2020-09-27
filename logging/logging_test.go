@@ -2,7 +2,7 @@ package logging
 
 import (
 	"context"
-	"errors" //nolint:depguard
+	"errors" //nolint:depguard // used to test wrapping
 	"reflect"
 	"testing"
 

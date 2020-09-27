@@ -10,7 +10,7 @@ GOPROXY ?= https://proxy.golang.org
 
 deps:  ## download dependencies
 	$Q GOPROXY=$(GOPROXY) go mod download
-	$Q GOPROXY=$(GOPROXY) go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.17.1
+	$Q GOPROXY=$(GOPROXY) go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.31.0
 	$Q GOPROXY=$(GOPROXY) go get golang.org/x/tools/cmd/goimports
 
 generate:  ## run a go generate

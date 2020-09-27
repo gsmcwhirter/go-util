@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
-	stdLog "log" //nolint:depguard
+	stdLog "log" //nolint:depguard // this is the package that wraps the stdlib
 	"net/http"
 	"os"
 
-	"github.com/go-kit/kit/log"       //nolint:depguard
-	"github.com/go-kit/kit/log/level" //nolint:depguard
+	"github.com/go-kit/kit/log"       //nolint:depguard // uses this internally to do the logging
+	"github.com/go-kit/kit/log/level" //nolint:depguard // uses this internally to do the logging
 
 	"github.com/gsmcwhirter/go-util/v7/errors"
 	"github.com/gsmcwhirter/go-util/v7/request"

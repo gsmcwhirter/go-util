@@ -1,7 +1,7 @@
 package errors
 
 import (
-	"errors" //nolint:depguard
+	"errors" //nolint:depguard // this is the package that wraps the stdlib
 	"reflect"
 	"testing"
 )

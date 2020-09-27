@@ -29,6 +29,9 @@ var MustNewTagKey = tag.MustNewKey
 
 type SpanData = trace.SpanData
 
+type TraceExporter = trace.Exporter
+type ViewExporter = view.Exporter
+
 var StringAttribute = trace.StringAttribute
 
 // ErrNoMeasurements is the error from Census.Record when no measurements were provided
@@ -80,8 +83,8 @@ func (c *Census) Flush() {
 	}
 }
 
-func (c *Census) StartSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
-	ctx, span := trace.StartSpan(ctx, name)
+func (c *Census) startSpan(ctx context.Context, name string, kind trace.StartOption, keyvals ...string) (context.Context, *trace.Span) {
+	ctx, span := trace.StartSpan(ctx, name, kind)
 
 	attributes := make([]trace.Attribute, 0, len(keyvals)/2+1)
 
@@ -98,6 +101,26 @@ func (c *Census) StartSpan(ctx context.Context, name string, keyvals ...string) 
 	}
 
 	return ctx, span
+}
+
+func (c *Census) StartSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
+	return c.startSpan(ctx, name, trace.WithSpanKind(trace.SpanKindServer), keyvals...)
+}
+
+func (c *Census) StartClientSpan(ctx context.Context, name string, keyvals ...string) (context.Context, *trace.Span) {
+	return c.startSpan(ctx, name, trace.WithSpanKind(trace.SpanKindServer), keyvals...)
+}
+
+func (c *Census) AddSpanAttributes(span *trace.Span, keyvals ...string) {
+	attributes := make([]trace.Attribute, 0, len(keyvals)/2)
+
+	for i := 0; i < len(keyvals)-1; i += 2 {
+		attributes = append(attributes, trace.StringAttribute(keyvals[i], keyvals[i+1]))
+	}
+
+	if len(attributes) > 0 {
+		span.AddAttributes(attributes...)
+	}
 }
 
 func (c *Census) Record(ctx context.Context, ms []Measurement, tags ...Tag) error {
