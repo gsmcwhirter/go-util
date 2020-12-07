@@ -62,6 +62,8 @@ func (l *logger) Err(msg string, err error, args ...interface{}) {
 		if logErr := l.base.Log(args...); logErr != nil {
 			panic(errors.WithDetails(logErr, args...))
 		}
+
+		return
 	}
 
 	args = append([]interface{}{"message", msg, "error", err}, args...)

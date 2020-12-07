@@ -8,6 +8,6 @@ require (
 	github.com/rs/xid v1.2.1
 	github.com/spf13/cobra v1.0.0
 	go.opencensus.io v0.22.4
-	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208
-	golang.org/x/tools v0.0.0-20200925191224-5d1fdd8fa346
+	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9
+	golang.org/x/tools v0.0.0-20201206230334-368bee879bfd
 )
