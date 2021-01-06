@@ -8,8 +8,8 @@ import (
 	"go.opencensus.io/tag"
 	"go.opencensus.io/trace"
 
-	"github.com/gsmcwhirter/go-util/v7/errors"
-	"github.com/gsmcwhirter/go-util/v7/request"
+	"github.com/gsmcwhirter/go-util/v8/errors"
+	"github.com/gsmcwhirter/go-util/v8/request"
 )
 
 type View = view.View
