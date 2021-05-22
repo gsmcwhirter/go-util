@@ -3,6 +3,7 @@ package pprofsidecar
 import (
 	"context"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"os/signal"
 	"time"
@@ -21,7 +22,17 @@ func Run(ctx context.Context, srvAddr string, interrupt chan os.Signal, run func
 		signal.Notify(interrupt, os.Interrupt)
 	}
 
-	srv := &http.Server{Addr: srvAddr} // the pprof debug server (make sure to import pprof in main)
+	mux := http.NewServeMux()
+	mux.Handle("/debug/pprof/", http.HandlerFunc(pprof.Index))
+	mux.Handle("/debug/pprof/cmdline", http.HandlerFunc(pprof.Cmdline))
+	mux.Handle("/debug/pprof/profile", http.HandlerFunc(pprof.Profile))
+	mux.Handle("/debug/pprof/symbol", http.HandlerFunc(pprof.Symbol))
+	mux.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
+
+	srv := &http.Server{
+		Addr:    srvAddr,
+		Handler: mux,
+	} // the pprof debug server
 
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
