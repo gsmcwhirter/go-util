@@ -27,11 +27,11 @@ func MarshalToBuffer(i interface{}) ([]byte, error) {
 	b := encPool.Get()
 	defer encPool.Put(b)
 
-	if b.Data, err = sj.Append(b.Data[:0], i, 0); err != nil {
+	if b, err = sj.Append(b[:0], i, 0); err != nil {
 		return nil, err
 	}
 
-	d := make([]byte, len(b.Data))
-	copy(d, b.Data)
+	d := make([]byte, len(b))
+	copy(d, b)
 	return d, nil
 }
