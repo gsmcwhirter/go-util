@@ -47,9 +47,11 @@ func Test_errStruct_Msg(t *testing.T) {
 }
 
 func Test_errStruct_Error(t *testing.T) {
+
 	type fields struct {
-		msg  string
-		data []interface{}
+		msg   string
+		data  []interface{}
+		cause error
 	}
 	tests := []struct {
 		name   string
@@ -72,12 +74,22 @@ func Test_errStruct_Error(t *testing.T) {
 			},
 			want: "test foo=bar baz=1",
 		},
+		{
+			name: "double wrapped",
+			fields: fields{
+				msg:   "another level",
+				data:  []interface{}{"data2", "yep"},
+				cause: Wrap(New("cause"), "first level", "data1", "woo!"),
+			},
+			want: "another level: first level: cause data1=woo! data2=yep",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &errStruct{
-				msg:  tt.fields.msg,
-				data: tt.fields.data,
+				msg:   tt.fields.msg,
+				data:  tt.fields.data,
+				cause: tt.fields.cause,
 			}
 			if got := e.Error(); got != tt.want {
 				t.Errorf("errStruct.Error() = %v, want %v", got, tt.want)
@@ -128,8 +140,9 @@ func Test_errStruct_Unwrap(t *testing.T) {
 
 func Test_errStruct_Data(t *testing.T) {
 	type fields struct {
-		msg  string
-		data []interface{}
+		msg   string
+		data  []interface{}
+		cause error
 	}
 	tests := []struct {
 		name   string
@@ -152,12 +165,22 @@ func Test_errStruct_Data(t *testing.T) {
 			},
 			want: []interface{}{"foo", "bar", "baz", 1},
 		},
+		{
+			name: "double wrapped",
+			fields: fields{
+				msg:   "another level",
+				data:  []interface{}{"data2", "yep"},
+				cause: Wrap(New("cause"), "first level", "data1", "woo!"),
+			},
+			want: []interface{}{"data1", "woo!", "data2", "yep"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := &errStruct{
-				msg:  tt.fields.msg,
-				data: tt.fields.data,
+				msg:   tt.fields.msg,
+				data:  tt.fields.data,
+				cause: tt.fields.cause,
 			}
 			if got := e.Data(); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("errStruct.Data() = %v, want %v", got, tt.want)
@@ -646,6 +669,7 @@ func TestWithDetailsMsg(t *testing.T) {
 func TestWrappedMsg(t *testing.T) {
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
+	testDouble := Wrap(errors.New("cause"), "first level", "data1", "woo!")
 
 	type args struct {
 		err  error
@@ -683,6 +707,15 @@ func TestWrappedMsg(t *testing.T) {
 				data: []interface{}{"foo", "bar", "baz"},
 			},
 			want: "test: cause",
+		},
+		{
+			name: "double wrapped",
+			args: args{
+				err:  testDouble,
+				msg:  "another level",
+				data: []interface{}{"data2", "yep"},
+			},
+			want: "another level: first level: cause",
 		},
 	}
 	for _, tt := range tests {

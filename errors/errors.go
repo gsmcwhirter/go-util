@@ -14,6 +14,10 @@ type Error interface {
 	Data() []interface{}
 }
 
+type hasData interface {
+	Data() []interface{}
+}
+
 type internalError interface {
 	Error
 	addDetails([]interface{})
@@ -56,7 +60,7 @@ func (e *errStruct) Error() string {
 		}
 	}
 
-	data := e.Data()
+	data := e.data
 	if len(data) > 0 {
 		ret += " " + formatData(data)
 	}
@@ -73,6 +77,14 @@ func (e *errStruct) Unwrap() error {
 }
 
 func (e *errStruct) Data() []interface{} {
+	if d, ok := e.cause.(hasData); ok {
+		subdata := d.Data()
+		combined := make([]interface{}, 0, len(e.data)+len(subdata)+2)
+		combined = append(combined, subdata...)
+		combined = append(combined, e.data...)
+		return combined
+	}
+
 	return e.data
 }
 
