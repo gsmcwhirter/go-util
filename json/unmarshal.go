@@ -5,7 +5,7 @@ import (
 
 	sj "github.com/segmentio/encoding/json"
 
-	"github.com/gsmcwhirter/go-util/v8/pool"
+	"github.com/gsmcwhirter/go-util/v9/pool"
 )
 
 type Unmarshaler interface {
