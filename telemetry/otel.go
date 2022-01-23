@@ -14,6 +14,21 @@ import (
 )
 
 type KeyValue = attribute.KeyValue
+
+var (
+	KVBool         = attribute.Bool
+	KVBoolSlice    = attribute.BoolSlice
+	KVInt          = attribute.Int
+	KVIntSlice     = attribute.IntSlice
+	KVInt64        = attribute.Int64
+	KVInt64Slice   = attribute.Int64Slice
+	KVFloat64      = attribute.Float64
+	KVFloat64Slice = attribute.Float64Slice
+	KVString       = attribute.String
+	KVStringSlice  = attribute.StringSlice
+	KVStringer     = attribute.Stringer
+)
+
 type SpanExporter = sdkTrace.SpanExporter
 type Resource = resource.Resource
 type Span = trace.Span
