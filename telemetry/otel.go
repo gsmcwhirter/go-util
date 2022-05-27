@@ -8,6 +8,8 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/metric/global"
+	"go.opentelemetry.io/otel/metric/instrument/syncfloat64"
+	"go.opentelemetry.io/otel/metric/instrument/syncint64"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdkTrace "go.opentelemetry.io/otel/sdk/trace"
@@ -42,6 +44,14 @@ type Tracer = trace.Tracer
 type Meter = metric.Meter
 type MeterProvider = metric.MeterProvider
 type MeterOption = metric.MeterOption
+
+type Int64Counter = syncint64.Counter
+type Int64UpDownCounter = syncint64.UpDownCounter
+type Int64Histogram = syncint64.Histogram
+
+type Float64Counter = syncfloat64.Counter
+type Float64UpDownCounter = syncfloat64.UpDownCounter
+type Float64Histogram = syncfloat64.Histogram
 
 type Telemeter struct { // trace.TracerProvider
 	resource       *Resource
