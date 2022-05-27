@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gsmcwhirter/go-util/v9/logging"
+	"github.com/gsmcwhirter/go-util/v10/logging"
 )
 
 func TestDebug(t *testing.T) {

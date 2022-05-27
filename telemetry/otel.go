@@ -6,6 +6,8 @@ import (
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdkTrace "go.opentelemetry.io/otel/sdk/trace"
@@ -29,27 +31,35 @@ var (
 	KVStringer     = attribute.Stringer
 )
 
-type SpanExporter = sdkTrace.SpanExporter
 type Resource = resource.Resource
+
+type SpanExporter = sdkTrace.SpanExporter
 type Span = trace.Span
 type StartSpanOption = trace.SpanStartOption
 type TracerOption = trace.TracerOption
 type Tracer = trace.Tracer
 
+type Meter = metric.Meter
+type MeterProvider = metric.MeterProvider
+type MeterOption = metric.MeterOption
+
 type Telemeter struct { // trace.TracerProvider
 	resource       *Resource
 	tracerProvider *sdkTrace.TracerProvider
 	traceExporter  SpanExporter
+	meterProvider  MeterProvider
 	propagator     propagation.TextMapPropagator
 }
 
 var _ trace.TracerProvider = (*Telemeter)(nil)
+var _ metric.MeterProvider = (*Telemeter)(nil)
 
-func NewTelemeter(serviceName, version, instanceID string, spanExporter SpanExporter, spanSample float64) *Telemeter {
+func NewTelemeter(serviceName, version, instanceID string, spanExporter SpanExporter, meterProvider MeterProvider, spanSample float64) *Telemeter {
 	res := newResource(serviceName, version, instanceID)
 	return &Telemeter{
 		resource:      res,
 		traceExporter: spanExporter,
+		meterProvider: meterProvider,
 		tracerProvider: sdkTrace.NewTracerProvider(
 			sdkTrace.WithBatcher(spanExporter),
 			sdkTrace.WithResource(res),
@@ -78,6 +88,8 @@ func newResource(serviceName, version, instanceID string) *Resource {
 func (t *Telemeter) MakeDefault() {
 	otel.SetTracerProvider(t)
 	otel.SetTextMapPropagator(t.propagator)
+
+	global.SetMeterProvider(t)
 }
 
 func (t *Telemeter) Shutdown(ctx context.Context) error {
@@ -89,5 +101,9 @@ func (t *Telemeter) StartSpan(ctx context.Context, pkg, op string, opts ...Start
 }
 
 func (t *Telemeter) Tracer(instrumentationName string, opts ...TracerOption) Tracer {
-	return t.tracerProvider.Tracer(instrumentationName)
+	return t.tracerProvider.Tracer(instrumentationName, opts...)
+}
+
+func (t *Telemeter) Meter(instrumentationName string, opts ...MeterOption) Meter {
+	return t.meterProvider.Meter(instrumentationName, opts...)
 }

@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 
-	"github.com/gsmcwhirter/go-util/v9/json"
+	"github.com/gsmcwhirter/go-util/v10/json"
 )
 
 func TelemTest1(ctx context.Context, t *Telemeter) {
@@ -44,7 +44,7 @@ func TestTelemetry(t *testing.T) {
 	)
 	assert.NoError(t, err, "failed to construct stdout exporter")
 
-	tm := NewTelemeter("test", "v0", "test_instance", exp, 1.0)
+	tm := NewTelemeter("test", "v0", "test_instance", exp, nil, 1.0)
 	ctx := context.Background()
 
 	TelemTest1(ctx, tm)

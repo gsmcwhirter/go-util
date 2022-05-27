@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gsmcwhirter/go-util/v9/request"
+	"github.com/gsmcwhirter/go-util/v10/request"
 )
 
 func Test_logger_Log(t *testing.T) {

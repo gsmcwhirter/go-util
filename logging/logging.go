@@ -11,8 +11,8 @@ import (
 	"github.com/go-kit/kit/log"       //nolint:depguard // uses this internally to do the logging
 	"github.com/go-kit/kit/log/level" //nolint:depguard // uses this internally to do the logging
 
-	"github.com/gsmcwhirter/go-util/v9/errors"
-	"github.com/gsmcwhirter/go-util/v9/request"
+	"github.com/gsmcwhirter/go-util/v10/errors"
+	"github.com/gsmcwhirter/go-util/v10/request"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name
@@ -26,6 +26,7 @@ type BaseLogger interface {
 }
 
 // Logger is the extended logging interface for the corvee applications
+//counterfeiter:generate . Logger
 type Logger interface {
 	Log(keyvals ...interface{}) error
 	Message(string, ...interface{})

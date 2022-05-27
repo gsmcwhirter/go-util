@@ -3,10 +3,11 @@ package parser
 import (
 	"strings"
 
-	"github.com/gsmcwhirter/go-util/v9/errors"
+	"github.com/gsmcwhirter/go-util/v10/errors"
 )
 
 // Parser is an interface describing a repl/text interface command parser
+//counterfeiter:generate . Parser
 type Parser interface {
 	ParseCommand(line string) (cmd string, err error)
 	KnownCommand(cmd string) bool
