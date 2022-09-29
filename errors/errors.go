@@ -1,8 +1,14 @@
 package errors
 
 import (
+	"errors"
 	"fmt"
 	"strings"
+)
+
+var (
+	Is = errors.Is
+	As = errors.As
 )
 
 // Error is our custom error type that allows wrapping errors with additional data.

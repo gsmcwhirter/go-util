@@ -35,23 +35,34 @@ var (
 
 type Resource = resource.Resource
 
-type SpanExporter = sdkTrace.SpanExporter
-type Span = trace.Span
-type StartSpanOption = trace.SpanStartOption
-type TracerOption = trace.TracerOption
-type Tracer = trace.Tracer
+type (
+	SpanExporter    = sdkTrace.SpanExporter
+	Span            = trace.Span
+	ReadOnlySpan    = trace.ReadOnlySpan
+	StartSpanOption = trace.SpanStartOption
+	TracerOption    = trace.TracerOption
+	Tracer          = trace.Tracer
+)
 
-type Meter = metric.Meter
-type MeterProvider = metric.MeterProvider
-type MeterOption = metric.MeterOption
+var WithAttributes = trace.WithAttributes
 
-type Int64Counter = syncint64.Counter
-type Int64UpDownCounter = syncint64.UpDownCounter
-type Int64Histogram = syncint64.Histogram
+type (
+	Meter         = metric.Meter
+	MeterProvider = metric.MeterProvider
+	MeterOption   = metric.MeterOption
+)
 
-type Float64Counter = syncfloat64.Counter
-type Float64UpDownCounter = syncfloat64.UpDownCounter
-type Float64Histogram = syncfloat64.Histogram
+type (
+	Int64Counter       = syncint64.Counter
+	Int64UpDownCounter = syncint64.UpDownCounter
+	Int64Histogram     = syncint64.Histogram
+)
+
+type (
+	Float64Counter       = syncfloat64.Counter
+	Float64UpDownCounter = syncfloat64.UpDownCounter
+	Float64Histogram     = syncfloat64.Histogram
+)
 
 type Telemeter struct { // trace.TracerProvider
 	resource       *Resource
@@ -61,8 +72,10 @@ type Telemeter struct { // trace.TracerProvider
 	propagator     propagation.TextMapPropagator
 }
 
-var _ trace.TracerProvider = (*Telemeter)(nil)
-var _ metric.MeterProvider = (*Telemeter)(nil)
+var (
+	_ trace.TracerProvider = (*Telemeter)(nil)
+	_ metric.MeterProvider = (*Telemeter)(nil)
+)
 
 func NewTelemeter(serviceName, version, instanceID string, spanExporter SpanExporter, meterProvider MeterProvider, spanSample float64) *Telemeter {
 	res := newResource(serviceName, version, instanceID)
