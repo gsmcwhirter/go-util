@@ -7,6 +7,8 @@ import (
 )
 
 func TestMarshal(t *testing.T) {
+	t.Parallel()
+
 	type testStruct struct {
 		Foo string `json:"foo"`
 		Bar int    `json:"baz"`
@@ -34,7 +36,10 @@ func TestMarshal(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := Marshal(tt.args.i)
 
 			if (tt.wantErr && !assert.Error(t, err)) || (!tt.wantErr && !assert.NoError(t, err)) {
@@ -50,6 +55,8 @@ func TestMarshal(t *testing.T) {
 }
 
 func TestMarshalToBuffer(t *testing.T) {
+	t.Parallel()
+
 	type testStruct struct {
 		Foo string `json:"foo"`
 		Bar int    `json:"baz"`
@@ -77,7 +84,10 @@ func TestMarshalToBuffer(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := MarshalToBuffer(tt.args.i)
 
 			if (tt.wantErr && !assert.Error(t, err)) || (!tt.wantErr && !assert.NoError(t, err)) {

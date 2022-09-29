@@ -8,6 +8,8 @@ import (
 )
 
 func TestDebug(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 
 	type args struct {
@@ -28,13 +30,16 @@ func TestDebug(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"level", "debug", "caller", "level_test.go:42", "message", "test"},
+				{"level", "debug", "caller", "level_test.go:47", "message", "test"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			l := Debug(tt.args.logger)
@@ -52,6 +57,8 @@ func TestDebug(t *testing.T) {
 }
 
 func TestInfo(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 
 	type args struct {
@@ -72,13 +79,16 @@ func TestInfo(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"level", "info", "caller", "level_test.go:86", "message", "test"},
+				{"level", "info", "caller", "level_test.go:96", "message", "test"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			l := Info(tt.args.logger)
@@ -96,6 +106,8 @@ func TestInfo(t *testing.T) {
 }
 
 func TestError(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 
 	type args struct {
@@ -116,13 +128,16 @@ func TestError(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"level", "error", "caller", "level_test.go:130", "message", "test"},
+				{"level", "error", "caller", "level_test.go:145", "message", "test"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			l := Error(tt.args.logger)

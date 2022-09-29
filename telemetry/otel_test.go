@@ -35,6 +35,8 @@ type span struct {
 }
 
 func TestTelemetry(t *testing.T) {
+	t.Parallel()
+
 	w := &bytes.Buffer{}
 	w.WriteString("[")
 	exp, err := stdouttrace.New(

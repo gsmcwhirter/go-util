@@ -26,6 +26,7 @@ type BaseLogger interface {
 }
 
 // Logger is the extended logging interface for the corvee applications
+//
 //counterfeiter:generate . Logger
 type Logger interface {
 	Log(keyvals ...interface{}) error

@@ -30,8 +30,9 @@ func Run(ctx context.Context, srvAddr string, interrupt chan os.Signal, run func
 	mux.Handle("/debug/pprof/trace", http.HandlerFunc(pprof.Trace))
 
 	srv := &http.Server{
-		Addr:    srvAddr,
-		Handler: mux,
+		Addr:              srvAddr,
+		Handler:           mux,
+		ReadHeaderTimeout: 5 * time.Second,
 	} // the pprof debug server
 
 	ctx, cancel := context.WithCancel(ctx)
@@ -66,7 +67,7 @@ func Run(ctx context.Context, srvAddr string, interrupt chan os.Signal, run func
 		shutdownCtx, cncl := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cncl()
 
-		return srv.Shutdown(shutdownCtx)
+		return srv.Shutdown(shutdownCtx) //nolint:contextcheck // want to use a fresh one here
 	})
 
 	return g.Wait()

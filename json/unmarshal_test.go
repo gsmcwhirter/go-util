@@ -9,6 +9,8 @@ import (
 )
 
 func TestUnmarshal(t *testing.T) {
+	t.Parallel()
+
 	type testStruct struct {
 		Foo string `json:"foo"`
 		Bar int    `json:"baz"`
@@ -38,7 +40,10 @@ func TestUnmarshal(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := Unmarshal(tt.args.b, tt.args.i)
 
 			if (tt.wantErr && !assert.Error(t, err)) || (!tt.wantErr && !assert.NoError(t, err)) {
@@ -54,6 +59,8 @@ func TestUnmarshal(t *testing.T) {
 }
 
 func TestUnmarshalFromReader(t *testing.T) {
+	t.Parallel()
+
 	type testStruct struct {
 		Foo string `json:"foo"`
 		Bar int    `json:"baz"`
@@ -83,7 +90,10 @@ func TestUnmarshalFromReader(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := UnmarshalFromReader(tt.args.r, tt.args.i)
 
 			if (tt.wantErr && !assert.Error(t, err)) || (!tt.wantErr && !assert.NoError(t, err)) {

@@ -38,7 +38,7 @@ type Resource = resource.Resource
 type (
 	SpanExporter    = sdkTrace.SpanExporter
 	Span            = trace.Span
-	ReadOnlySpan    = trace.ReadOnlySpan
+	ReadOnlySpan    = sdkTrace.ReadOnlySpan
 	StartSpanOption = trace.SpanStartOption
 	TracerOption    = trace.TracerOption
 	Tracer          = trace.Tracer

@@ -6,6 +6,8 @@ import (
 )
 
 func TestNewParser(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		opts Options
 	}
@@ -46,7 +48,10 @@ func TestNewParser(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := NewParser(tt.args.opts); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewParser() = %v, want %v", got, tt.want)
 			}
@@ -55,6 +60,8 @@ func TestNewParser(t *testing.T) {
 }
 
 func Test_parser_IsCaseSensitive(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		CmdIndicator  string
 		knownCommands map[string]bool
@@ -85,7 +92,10 @@ func Test_parser_IsCaseSensitive(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &parser{
 				CmdIndicator:  tt.fields.CmdIndicator,
 				knownCommands: tt.fields.knownCommands,
@@ -99,6 +109,8 @@ func Test_parser_IsCaseSensitive(t *testing.T) {
 }
 
 func Test_parser_KnownCommand(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		CmdIndicator  string
 		knownCommands map[string]bool
@@ -165,7 +177,10 @@ func Test_parser_KnownCommand(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &parser{
 				CmdIndicator:  tt.fields.CmdIndicator,
 				knownCommands: tt.fields.knownCommands,
@@ -179,6 +194,8 @@ func Test_parser_KnownCommand(t *testing.T) {
 }
 
 func Test_parser_LearnCommand(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		CmdIndicator  string
 		knownCommands map[string]bool
@@ -215,7 +232,10 @@ func Test_parser_LearnCommand(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &parser{
 				CmdIndicator:  tt.fields.CmdIndicator,
 				knownCommands: tt.fields.knownCommands,
@@ -231,6 +251,8 @@ func Test_parser_LearnCommand(t *testing.T) {
 }
 
 func Test_parser_LeadChar(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		CmdIndicator  string
 		knownCommands map[string]bool
@@ -261,7 +283,10 @@ func Test_parser_LeadChar(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &parser{
 				CmdIndicator:  tt.fields.CmdIndicator,
 				knownCommands: tt.fields.knownCommands,
@@ -275,6 +300,8 @@ func Test_parser_LeadChar(t *testing.T) {
 }
 
 func Test_parser_ParseCommand(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		CmdIndicator  string
 		knownCommands map[string]bool
@@ -358,7 +385,10 @@ func Test_parser_ParseCommand(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			p := &parser{
 				CmdIndicator:  tt.fields.CmdIndicator,
 				knownCommands: tt.fields.knownCommands,
@@ -377,6 +407,8 @@ func Test_parser_ParseCommand(t *testing.T) {
 }
 
 func TestMaybeCount(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		line string
 	}
@@ -448,7 +480,10 @@ func TestMaybeCount(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			gotL, gotC := MaybeCount(tt.args.line)
 			if gotL != tt.wantL {
 				t.Errorf("MaybeCount() gotL = %v, want %v", gotL, tt.wantL)

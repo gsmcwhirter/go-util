@@ -1,7 +1,7 @@
 package errors
 
 import (
-	"errors"
+	"errors" //nolint:depguard // we need this for aliasing
 	"fmt"
 	"strings"
 )
@@ -29,7 +29,7 @@ type internalError interface {
 	addDetails([]interface{})
 }
 
-type errStruct struct {
+type errStruct struct { //nolint:errname // disabled
 	msg   string
 	data  []interface{}
 	cause error

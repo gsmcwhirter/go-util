@@ -7,6 +7,7 @@ import (
 )
 
 // Parser is an interface describing a repl/text interface command parser
+//
 //counterfeiter:generate . Parser
 type Parser interface {
 	ParseCommand(line string) (cmd string, err error)

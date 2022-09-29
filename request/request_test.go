@@ -6,7 +6,10 @@ import (
 )
 
 func TestNewRequestContext(t *testing.T) {
+	t.Parallel()
+
 	t.Run("check request id inserted", func(t *testing.T) {
+		t.Parallel()
 		got := NewRequestContext()
 		if rid, ok := got.Value(ContextKey("request_id")).(string); !ok {
 			t.Error("no request_id was present")
@@ -17,6 +20,8 @@ func TestNewRequestContext(t *testing.T) {
 }
 
 func TestNewRequestContextFrom(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		origID string
 	}
@@ -34,7 +39,10 @@ func TestNewRequestContextFrom(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctx := context.Background()
 			if tt.args.origID != "" {
 				ctx = NewRequestContextWithRequestID(ctx, tt.args.origID)
@@ -58,6 +66,8 @@ func TestNewRequestContextFrom(t *testing.T) {
 }
 
 func TestGetRequestID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name   string
 		origID string
@@ -78,7 +88,10 @@ func TestGetRequestID(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			ctx := context.Background()
 			if tt.origID != "" {
 				ctx = NewRequestContextWithRequestID(ctx, tt.origID)

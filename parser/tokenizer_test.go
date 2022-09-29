@@ -6,6 +6,8 @@ import (
 )
 
 func TestTokenize(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		msg    string
 		delim  rune
@@ -86,7 +88,10 @@ func TestTokenize(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := Tokenize(tt.args.msg, tt.args.delim, tt.args.escape, tt.args.quot)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("tokenize() error = %v, wantErr %v", err, tt.wantErr)

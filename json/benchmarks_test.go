@@ -5,8 +5,10 @@ import (
 	"testing"
 )
 
-var Out []byte
-var T interface{}
+var (
+	Out []byte
+	T   interface{}
+)
 
 func BenchmarkMarshal(b *testing.B) {
 	type testStruct struct {
@@ -60,7 +62,6 @@ func BenchmarkUnmarshal(b *testing.B) {
 	t := testStruct{}
 
 	for i := 0; i < b.N; i++ {
-
 		err := Unmarshal(byt, &t)
 		if err != nil {
 			b.Error(err)

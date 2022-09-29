@@ -7,6 +7,8 @@ import (
 )
 
 func Test_errStruct_Msg(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		msg  string
 		data []interface{}
@@ -34,7 +36,10 @@ func Test_errStruct_Msg(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:  tt.fields.msg,
 				data: tt.fields.data,
@@ -47,6 +52,7 @@ func Test_errStruct_Msg(t *testing.T) {
 }
 
 func Test_errStruct_Error(t *testing.T) {
+	t.Parallel()
 
 	type fields struct {
 		msg   string
@@ -85,7 +91,10 @@ func Test_errStruct_Error(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:   tt.fields.msg,
 				data:  tt.fields.data,
@@ -99,6 +108,8 @@ func Test_errStruct_Error(t *testing.T) {
 }
 
 func Test_errStruct_Unwrap(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		msg  string
 		data []interface{}
@@ -126,7 +137,10 @@ func Test_errStruct_Unwrap(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:  tt.fields.msg,
 				data: tt.fields.data,
@@ -139,6 +153,8 @@ func Test_errStruct_Unwrap(t *testing.T) {
 }
 
 func Test_errStruct_Data(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		msg   string
 		data  []interface{}
@@ -176,7 +192,10 @@ func Test_errStruct_Data(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:   tt.fields.msg,
 				data:  tt.fields.data,
@@ -190,6 +209,8 @@ func Test_errStruct_Data(t *testing.T) {
 }
 
 func Test_errStruct_addDetails(t *testing.T) {
+	t.Parallel()
+
 	type fields struct {
 		msg  string
 		data []interface{}
@@ -238,7 +259,10 @@ func Test_errStruct_addDetails(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:  tt.fields.msg,
 				data: tt.fields.data,
@@ -252,6 +276,8 @@ func Test_errStruct_addDetails(t *testing.T) {
 }
 
 func Test_wrapped_Error(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 
@@ -321,7 +347,10 @@ func Test_wrapped_Error(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			e := &errStruct{
 				msg:   tt.fields.errStruct.msg,
 				data:  tt.fields.errStruct.data,
@@ -335,7 +364,9 @@ func Test_wrapped_Error(t *testing.T) {
 }
 
 func Test_wrapped_Unwrap(t *testing.T) {
-	var c = errors.New("test")
+	t.Parallel()
+
+	c := errors.New("test")
 
 	type fields struct {
 		errStruct errStruct
@@ -392,7 +423,9 @@ func Test_wrapped_Unwrap(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			e := &errStruct{
 				msg:   tt.fields.errStruct.msg,
 				data:  tt.fields.errStruct.data,
@@ -406,6 +439,8 @@ func Test_wrapped_Unwrap(t *testing.T) {
 }
 
 func Test_formatData(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		data []interface{}
 	}
@@ -444,7 +479,10 @@ func Test_formatData(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if got := formatData(tt.args.data); got != tt.want {
 				t.Errorf("formatData() = %v, want %v", got, tt.want)
 			}
@@ -453,6 +491,8 @@ func Test_formatData(t *testing.T) {
 }
 
 func TestNew(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		msg string
 	}
@@ -464,7 +504,10 @@ func TestNew(t *testing.T) {
 		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if err := New(tt.args.msg); (err != nil) != tt.wantErr {
 				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -473,6 +516,8 @@ func TestNew(t *testing.T) {
 }
 
 func TestWrap(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 
@@ -536,7 +581,10 @@ func TestWrap(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if err := Wrap(tt.args.err, tt.args.msg, tt.args.data...); !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("Wrap() error = %v, wantErr %v", err, tt.want)
 			}
@@ -545,6 +593,8 @@ func TestWrap(t *testing.T) {
 }
 
 func TestWithDetails(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 
@@ -599,7 +649,10 @@ func TestWithDetails(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if err := WithDetails(tt.args.err, tt.args.data...); !reflect.DeepEqual(err, tt.want) {
 				t.Errorf("WithDetails() error = %v, wantErr %v", err, tt.want)
 			}
@@ -608,6 +661,8 @@ func TestWithDetails(t *testing.T) {
 }
 
 func TestWithDetailsMsg(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 
@@ -646,7 +701,10 @@ func TestWithDetailsMsg(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := WithDetails(tt.args.err, tt.args.data...)
 			if err == nil {
 				t.Errorf("WithDetails() returned nil")
@@ -667,6 +725,8 @@ func TestWithDetailsMsg(t *testing.T) {
 }
 
 func TestWrappedMsg(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("cause")
 	testData := WithDetails(New("cause"), "quux", "foobar")
 	testDouble := Wrap(errors.New("cause"), "first level", "data1", "woo!")
@@ -719,7 +779,10 @@ func TestWrappedMsg(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			err := Wrap(tt.args.err, tt.args.msg, tt.args.data...)
 			if err == nil {
 				t.Errorf("Wrap() returned nil")

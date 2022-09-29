@@ -10,6 +10,8 @@ import (
 )
 
 func Test_logger_Log(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		args []interface{}
 	}
@@ -29,7 +31,10 @@ func Test_logger_Log(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			if err := tt.l.Log(tt.args.args...); (err != nil) != tt.wantErr {
 				t.Errorf("logger.Log() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -43,6 +48,8 @@ func Test_logger_Log(t *testing.T) {
 }
 
 func Test_logger_Printf(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		f    string
 		args []interface{}
@@ -61,7 +68,10 @@ func Test_logger_Printf(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			tt.l.Printf(tt.args.f, tt.args.args...)
 
 			lines := tt.l.base.(*dummyLogger).lines
@@ -73,6 +83,8 @@ func Test_logger_Printf(t *testing.T) {
 }
 
 func Test_logger_Message(t *testing.T) {
+	t.Parallel()
+
 	type args struct {
 		msg  string
 		args []interface{}
@@ -91,7 +103,10 @@ func Test_logger_Message(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			tt.l.Message(tt.args.msg, tt.args.args...)
 
 			lines := tt.l.base.(*dummyLogger).lines
@@ -103,6 +118,8 @@ func Test_logger_Message(t *testing.T) {
 }
 
 func Test_logger_Err(t *testing.T) {
+	t.Parallel()
+
 	testErr := errors.New("test")
 	type args struct {
 		msg  string
@@ -123,7 +140,10 @@ func Test_logger_Err(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			tt.l.Err(tt.args.msg, tt.args.err, tt.args.args...)
 
 			lines := tt.l.base.(*dummyLogger).lines
@@ -135,6 +155,8 @@ func Test_logger_Err(t *testing.T) {
 }
 
 func TestNewFrom(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 	type args struct {
 		l BaseLogger
@@ -160,7 +182,10 @@ func TestNewFrom(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			if got := NewFrom(tt.args.l); !reflect.DeepEqual(got, tt.want) {
@@ -175,6 +200,8 @@ func TestNewFrom(t *testing.T) {
 }
 
 func TestBaseFrom(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 
 	type args struct {
@@ -194,7 +221,10 @@ func TestBaseFrom(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			if got := BaseFrom(tt.args.l); !reflect.DeepEqual(got, tt.want) {
@@ -205,6 +235,8 @@ func TestBaseFrom(t *testing.T) {
 }
 
 func TestWith(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 	type args struct {
 		l          Logger
@@ -228,14 +260,17 @@ func TestWith(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"foo", "bar", "caller", "logging_test.go:243", "message", "test"},
-				{"foo", "bar", "caller", "logging_test.go:249", "test", "baz", "message", "test"},
+				{"foo", "bar", "caller", "logging_test.go:278", "message", "test"},
+				{"foo", "bar", "caller", "logging_test.go:284", "test", "baz", "message", "test"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			l := With(tt.args.l, tt.args.keyvals1...)
@@ -259,6 +294,8 @@ func TestWith(t *testing.T) {
 }
 
 func TestWithContext(t *testing.T) {
+	t.Parallel()
+
 	dummy := &dummyLogger{}
 	rid := request.GenerateRequestID()
 
@@ -282,7 +319,7 @@ func TestWithContext(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"caller", "logging_test.go:309", "request_id", "unknown", "message", "test"},
+				{"caller", "logging_test.go:349", "request_id", "unknown", "message", "test"},
 			},
 			wantErr: false,
 		},
@@ -295,13 +332,16 @@ func TestWithContext(t *testing.T) {
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"caller", "logging_test.go:309", "request_id", rid, "message", "test"},
+				{"caller", "logging_test.go:349", "request_id", rid, "message", "test"},
 			},
 			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
+		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			dummy.reset()
 
 			l := WithContext(tt.args.ctx, tt.args.logger)

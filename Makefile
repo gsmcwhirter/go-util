@@ -10,7 +10,7 @@ GOPROXY ?= https://proxy.golang.org
 
 deps:  ## download dependencies
 	$Q GOPROXY=$(GOPROXY) go mod download
-	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.46.2
+	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
 	$Q GOPROXY=$(GOPROXY) go install golang.org/x/tools/cmd/goimports
 
 generate:  ## run a go generate
@@ -30,8 +30,9 @@ benchmark-json:
 vet:  deps ## run various linters and vetters
 	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do gofmt -s -w $$d/*.go; done'
 	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do goimports -w -local $(PROJECT) $$d/*.go; done'
-	$Q golangci-lint run -E revive,gosimple,staticcheck ./...
-	$Q golangci-lint run -E deadcode,depguard,errcheck,gocritic,gofmt,goimports,gosec,govet,ineffassign,nakedret,prealloc,structcheck,typecheck,unconvert,varcheck ./...
+	$Q golangci-lint run -c .golangci.yml -E revive,gosimple,staticcheck ./...
+	$Q golangci-lint run -c .golangci.yml -E asciicheck,contextcheck,depguard,durationcheck,errcheck,errname,gocritic,gofumpt,goimports,gosec,govet,ineffassign,nakedret,paralleltest,prealloc,predeclared,typecheck,unconvert,unused,whitespace ./...
+	$Q golangci-lint run -c .golangci.yml -E godox ./... || true
 
 help:  ## Show the help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' ./Makefile
