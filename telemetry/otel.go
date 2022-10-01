@@ -130,3 +130,7 @@ func (t *Telemeter) Tracer(instrumentationName string, opts ...TracerOption) Tra
 func (t *Telemeter) Meter(instrumentationName string, opts ...MeterOption) Meter {
 	return t.meterProvider.Meter(instrumentationName, opts...)
 }
+
+func (t *Telemeter) Resource() *Resource {
+	return t.resource
+}
