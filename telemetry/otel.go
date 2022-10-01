@@ -78,7 +78,11 @@ var (
 )
 
 func NewTelemeter(serviceName, version, instanceID string, spanExporter SpanExporter, meterProvider MeterProvider, spanSample float64) *Telemeter {
-	res := newResource(serviceName, version, instanceID)
+	res := NewResource(serviceName, version, instanceID)
+	return NewTelemeterFromResource(res, spanExporter, meterProvider, spanSample)
+}
+
+func NewTelemeterFromResource(res *Resource, spanExporter SpanExporter, meterProvider MeterProvider, spanSample float64) *Telemeter {
 	return &Telemeter{
 		resource:      res,
 		traceExporter: spanExporter,
@@ -99,7 +103,7 @@ func NewTelemeter(serviceName, version, instanceID string, spanExporter SpanExpo
 	}
 }
 
-func newResource(serviceName, version, instanceID string) *Resource {
+func NewResource(serviceName, version, instanceID string) *Resource {
 	return resource.NewWithAttributes(
 		semconv.SchemaURL,
 		semconv.ServiceNameKey.String(serviceName),
