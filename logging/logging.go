@@ -13,6 +13,7 @@ import (
 
 	"github.com/gsmcwhirter/go-util/v11/errors"
 	"github.com/gsmcwhirter/go-util/v11/request"
+	"github.com/gsmcwhirter/go-util/v11/telemetry"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name
@@ -139,6 +140,17 @@ func WithContext(ctx context.Context, logger Logger, keyvals ...interface{}) Log
 	return With(logger, keyvals...)
 }
 
+func WithAttributes(logger Logger, attrs ...telemetry.KeyValue) Logger {
+	args := make([]interface{}, 0, len(attrs)*2)
+	for _, attr := range attrs {
+		args = append(args, attr.Key, attr.Value.AsInterface())
+	}
+
+	logger = With(logger, args...)
+
+	return logger
+}
+
 // WithRequest wraps a logger with fields from a http.Request
 func WithRequest(req *http.Request, l Logger, keyvals ...interface{}) Logger {
 	keyvals = append(keyvals,
@@ -148,6 +160,16 @@ func WithRequest(req *http.Request, l Logger, keyvals ...interface{}) Logger {
 	)
 
 	return WithContext(req.Context(), l, keyvals...)
+}
+
+func WithClientRequest(l Logger, req *http.Request) Logger {
+	attrs := telemetry.HTTPClientAttributesFromHTTPRequest(req)
+	return WithAttributes(l, attrs...)
+}
+
+func WithServerRequest(l Logger, req *http.Request, serverName, routeName string) Logger {
+	attrs := telemetry.HTTPServerAttributesFromHTTPRequest(serverName, routeName, req)
+	return WithAttributes(l, attrs...)
 }
 
 // PatchStdLib sets up the stdlib global logger to run through the provided one instead

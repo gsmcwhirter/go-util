@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -24,6 +25,26 @@ type RetryOptions struct {
 	RetryWaitMin time.Duration // Minimum time to wait
 	RetryWaitMax time.Duration // Maximum time to wait
 	RetryMax     *int          // Maximum number of retries
+}
+
+type HTTPResponseError struct {
+	Repsonse *http.Response
+	Body     []byte
+	Cause    error
+}
+
+func (e *HTTPResponseError) Error() string {
+	code := -1
+	if e.Repsonse != nil {
+		code = e.Repsonse.StatusCode
+	}
+
+	msg := fmt.Sprintf("HTTP Response Error: %d", code)
+	if e.Cause != nil {
+		msg += fmt.Sprintf(", cause=%v", e.Cause.Error())
+	}
+
+	return msg
 }
 
 //counterfeiter:generate . Client
@@ -53,8 +74,8 @@ type TelemeterClient struct {
 }
 
 var (
-	_ Client               = (*TelemeterClient)(nil)
-	_ retryablehttp.Logger = logging.Logger(nil)
+	_ Client                      = (*TelemeterClient)(nil)
+	_ retryablehttp.LeveledLogger = (*HTTPLogger)(nil)
 )
 
 func NewTelemeterClient(logger logging.Logger, tel *telemetry.Telemeter, opts ...telemetry.StartSpanOption) *TelemeterClient {
@@ -66,7 +87,9 @@ func NewTelemeterClient(logger logging.Logger, tel *telemetry.Telemeter, opts ..
 	rt := NewTelemeterRoundTripper(client.HTTPClient.Transport, tel, opts...)
 	client.HTTPClient.Transport = rt
 
-	client.Logger = logger
+	client.Logger = &HTTPLogger{
+		Logger: logger,
+	}
 
 	return &TelemeterClient{
 		client:        client,
@@ -116,8 +139,11 @@ func (c *TelemeterClient) DeleteJSON(ctx context.Context, target interface{}, re
 
 func (c *TelemeterClient) RequestJSON(ctx context.Context, target interface{}, method, reqURL string, opts ...ClientOpt) (*http.Response, error) {
 	respHandlerFunc := func(httpResp *http.Response) error {
-		err := json.UnmarshalFromReader(httpResp.Body, target)
-		return errors.Wrap(err, "could not unmarshal reponse")
+		if httpResp.StatusCode < 400 {
+			err := json.UnmarshalFromReader(httpResp.Body, target)
+			return errors.Wrap(err, "could not unmarshal reponse")
+		}
+		return nil
 	}
 	opts = append(opts, WithResponseHandler(respHandlerFunc))
 
@@ -125,7 +151,20 @@ func (c *TelemeterClient) RequestJSON(ctx context.Context, target interface{}, m
 	if err != nil {
 		return httpResp, errors.Wrap(err, "could not prepareAndSendRequest")
 	}
-	defer deferutil.CheckDeferLog(c.logger, httpResp.Body.Close)
+	logger := logging.WithContext(ctx, c.logger)
+	logger = logging.WithClientRequest(logger, httpResp.Request)
+	defer deferutil.CheckDeferLog(logger, httpResp.Body.Close)
+
+	if httpResp.StatusCode >= 400 {
+		body, errBody := io.ReadAll(httpResp.Body)
+		if errBody != nil {
+			logger.Err("could not read response body", errBody)
+		}
+		return httpResp, &HTTPResponseError{
+			Repsonse: httpResp,
+			Body:     body,
+		}
+	}
 
 	return httpResp, nil
 }
@@ -152,11 +191,13 @@ func (c *TelemeterClient) DeleteBody(ctx context.Context, reqURL string, opts ..
 
 func (c *TelemeterClient) RequestBody(ctx context.Context, method, reqURL string, opts ...ClientOpt) ([]byte, *http.Response, error) {
 	var body []byte
-
 	respHandlerFunc := func(httpResp *http.Response) error {
-		var err error
-		body, err = io.ReadAll(httpResp.Body)
-		return errors.Wrap(err, "could not read response body")
+		if httpResp.StatusCode < 400 {
+			var err error
+			body, err = io.ReadAll(httpResp.Body)
+			return errors.Wrap(err, "could not read response body")
+		}
+		return nil
 	}
 	opts = append(opts, WithResponseHandler(respHandlerFunc))
 
@@ -164,7 +205,20 @@ func (c *TelemeterClient) RequestBody(ctx context.Context, method, reqURL string
 	if err != nil {
 		return nil, httpResp, errors.Wrap(err, "could not prepareAndSendRequest")
 	}
-	defer deferutil.CheckDeferLog(c.logger, httpResp.Body.Close)
+	logger := logging.WithContext(ctx, c.logger)
+	logger = logging.WithClientRequest(logger, httpResp.Request)
+	defer deferutil.CheckDeferLog(logger, httpResp.Body.Close)
+
+	if httpResp.StatusCode >= 400 {
+		body, errBody := io.ReadAll(httpResp.Body)
+		if errBody != nil {
+			logger.Err("could not read response body", errBody)
+		}
+		return nil, httpResp, &HTTPResponseError{
+			Repsonse: httpResp,
+			Body:     body,
+		}
+	}
 
 	return body, httpResp, nil
 }
