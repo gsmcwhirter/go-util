@@ -15,7 +15,10 @@ import (
 	"github.com/gsmcwhirter/go-util/v11/telemetry"
 )
 
-type Request = retryablehttp.Request
+type (
+	Request             = retryablehttp.Request
+	ResponseHandlerFunc = retryablehttp.ResponseHandlerFunc
+)
 
 type RetryOptions struct {
 	RetryWaitMin time.Duration // Minimum time to wait
@@ -112,15 +115,17 @@ func (c *TelemeterClient) DeleteJSON(ctx context.Context, target interface{}, re
 }
 
 func (c *TelemeterClient) RequestJSON(ctx context.Context, target interface{}, method, reqURL string, opts ...ClientOpt) (*http.Response, error) {
-	httpResp, err := c.prepareAndSendRequest(ctx, method, reqURL, opts...)
+	respHandlerFunc := func(httpResp *http.Response) error {
+		err := json.UnmarshalFromReader(httpResp.Body, target)
+		return errors.Wrap(err, "could not unmarshal reponse")
+	}
+	opts = append(opts, WithResponseHandler(respHandlerFunc))
+
+	httpResp, err := c.prepareAndSendRequest(ctx, method, reqURL, opts)
 	if err != nil {
 		return httpResp, errors.Wrap(err, "could not prepareAndSendRequest")
 	}
 	defer deferutil.CheckDeferLog(c.logger, httpResp.Body.Close)
-
-	if err := json.UnmarshalFromReader(httpResp.Body, target); err != nil {
-		return httpResp, errors.Wrap(err, "could not unmarshal reponse")
-	}
 
 	return httpResp, nil
 }
@@ -146,21 +151,25 @@ func (c *TelemeterClient) DeleteBody(ctx context.Context, reqURL string, opts ..
 }
 
 func (c *TelemeterClient) RequestBody(ctx context.Context, method, reqURL string, opts ...ClientOpt) ([]byte, *http.Response, error) {
-	httpResp, err := c.prepareAndSendRequest(ctx, method, reqURL, opts...)
+	var body []byte
+
+	respHandlerFunc := func(httpResp *http.Response) error {
+		var err error
+		body, err = io.ReadAll(httpResp.Body)
+		return errors.Wrap(err, "could not read response body")
+	}
+	opts = append(opts, WithResponseHandler(respHandlerFunc))
+
+	httpResp, err := c.prepareAndSendRequest(ctx, method, reqURL, opts)
 	if err != nil {
 		return nil, httpResp, errors.Wrap(err, "could not prepareAndSendRequest")
 	}
 	defer deferutil.CheckDeferLog(c.logger, httpResp.Body.Close)
 
-	body, err := io.ReadAll(httpResp.Body)
-	if err != nil {
-		return nil, nil, errors.Wrap(err, "could not read response body")
-	}
-
 	return body, httpResp, nil
 }
 
-func (c *TelemeterClient) prepareAndSendRequest(ctx context.Context, method, reqURL string, opts ...ClientOpt) (httpResp *http.Response, err error) {
+func (c *TelemeterClient) prepareAndSendRequest(ctx context.Context, method, reqURL string, opts []ClientOpt) (httpResp *http.Response, err error) {
 	ctx, span := c.telemeter.StartSpan(ctx, "http", "prepareAndSendRequest", c.telemeterOpts...)
 	defer span.End()
 

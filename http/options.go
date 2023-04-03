@@ -39,3 +39,10 @@ func WithQueryParams(params url.Values) ClientOpt {
 		return nil
 	}
 }
+
+func WithResponseHandler(fn ResponseHandlerFunc) ClientOpt {
+	return func(req *Request) error {
+		req.SetResponseHandler(fn)
+		return nil
+	}
+}
