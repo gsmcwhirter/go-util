@@ -38,6 +38,8 @@ linters-settings:
       - log
       - github.com/go-kit/kit/log
       - github.com/go-kit/kit/log/level
+      - github.com/go-kit/log
+      - github.com/go-kit/log/level
       # Use github.com/mailru/easyjson instead
       - encoding/json
       # Each use of unsafe must be reviewed

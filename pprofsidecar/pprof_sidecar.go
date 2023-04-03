@@ -17,7 +17,7 @@ import (
 // This should not be used for http servers
 func Run(ctx context.Context, srvAddr string, interrupt chan os.Signal, run func(context.Context) error) error {
 	if interrupt == nil {
-		interrupt = make(chan os.Signal)
+		interrupt = make(chan os.Signal, 3)
 		defer close(interrupt)
 		signal.Notify(interrupt, os.Interrupt)
 	}

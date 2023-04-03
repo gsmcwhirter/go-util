@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gsmcwhirter/go-util/v10/request"
+	"github.com/gsmcwhirter/go-util/v11/request"
 )
 
 func Test_logger_Log(t *testing.T) {
@@ -296,12 +296,10 @@ func TestWith(t *testing.T) {
 func TestWithContext(t *testing.T) {
 	t.Parallel()
 
-	dummy := &dummyLogger{}
 	rid := request.GenerateRequestID()
 
 	type args struct {
 		ctx     context.Context
-		logger  Logger
 		keyvals []interface{}
 	}
 	tests := []struct {
@@ -313,26 +311,24 @@ func TestWithContext(t *testing.T) {
 		{
 			name: "without request_id",
 			args: args{
-				logger:  With(&logger{base: dummy}, "caller", DefaultCaller),
 				ctx:     context.Background(),
 				keyvals: []interface{}{"message", "test"},
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"caller", "logging_test.go:349", "request_id", "unknown", "message", "test"},
+				{"caller", "logging_test.go:346", "request_id", "unknown", "message", "test"},
 			},
 			wantErr: false,
 		},
 		{
 			name: "with request_id",
 			args: args{
-				logger:  With(&logger{base: dummy}, "caller", DefaultCaller),
 				ctx:     request.NewRequestContextWithRequestID(context.Background(), rid),
 				keyvals: []interface{}{"message", "test"},
 			},
 			wantLines: [][]interface{}{
 				// NOTE: When adding code, you'll probably have to change the line numbers here
-				{"caller", "logging_test.go:349", "request_id", rid, "message", "test"},
+				{"caller", "logging_test.go:346", "request_id", rid, "message", "test"},
 			},
 			wantErr: false,
 		},
@@ -342,9 +338,10 @@ func TestWithContext(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			dummy.reset()
+			dummy := &dummyLogger{}
+			lgr := With(&logger{base: dummy}, "caller", DefaultCaller)
 
-			l := WithContext(tt.args.ctx, tt.args.logger)
+			l := WithContext(tt.args.ctx, lgr)
 
 			if err := l.Log(tt.args.keyvals...); (err != nil) != tt.wantErr {
 				t.Errorf("logger.Log() 1 error = %v, wantErr %v", err, tt.wantErr)

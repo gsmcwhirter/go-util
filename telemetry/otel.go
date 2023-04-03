@@ -6,15 +6,23 @@ import (
 	"go.opentelemetry.io/contrib/propagators/b3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/metric/global"
-	"go.opentelemetry.io/otel/metric/instrument/syncfloat64"
-	"go.opentelemetry.io/otel/metric/instrument/syncint64"
+	"go.opentelemetry.io/otel/metric/instrument"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdkTrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.7.0"
 	"go.opentelemetry.io/otel/trace"
+)
+
+type Code = codes.Code
+
+const (
+	CodeUnset Code = codes.Unset
+	CodeError Code = codes.Error
+	CodeOK    Code = codes.Ok
 )
 
 type KeyValue = attribute.KeyValue
@@ -53,15 +61,15 @@ type (
 )
 
 type (
-	Int64Counter       = syncint64.Counter
-	Int64UpDownCounter = syncint64.UpDownCounter
-	Int64Histogram     = syncint64.Histogram
+	Int64Counter       = instrument.Int64Counter
+	Int64UpDownCounter = instrument.Int64UpDownCounter
+	Int64Histogram     = instrument.Int64Histogram
 )
 
 type (
-	Float64Counter       = syncfloat64.Counter
-	Float64UpDownCounter = syncfloat64.UpDownCounter
-	Float64Histogram     = syncfloat64.Histogram
+	Float64Counter       = instrument.Float64Counter
+	Float64UpDownCounter = instrument.Float64UpDownCounter
+	Float64Histogram     = instrument.Float64Histogram
 )
 
 type Telemeter struct { // trace.TracerProvider

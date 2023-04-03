@@ -3,7 +3,7 @@ package json
 import (
 	sj "github.com/segmentio/encoding/json"
 
-	"github.com/gsmcwhirter/go-util/v10/pool"
+	"github.com/gsmcwhirter/go-util/v11/pool"
 )
 
 type Marshaler interface {

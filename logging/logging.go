@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/go-kit/kit/log"       //nolint:depguard // uses this internally to do the logging
-	"github.com/go-kit/kit/log/level" //nolint:depguard // uses this internally to do the logging
+	"github.com/go-kit/log"       //nolint:depguard,staticcheck // uses this internally to do the logging
+	"github.com/go-kit/log/level" //nolint:depguard,staticcheck // uses this internally to do the logging
 
-	"github.com/gsmcwhirter/go-util/v10/errors"
-	"github.com/gsmcwhirter/go-util/v10/request"
+	"github.com/gsmcwhirter/go-util/v11/errors"
+	"github.com/gsmcwhirter/go-util/v11/request"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name

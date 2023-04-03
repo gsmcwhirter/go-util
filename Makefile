@@ -10,7 +10,7 @@ GOPROXY ?= https://proxy.golang.org
 
 deps:  ## download dependencies
 	$Q GOPROXY=$(GOPROXY) go mod download
-	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.49.0
+	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
 	$Q GOPROXY=$(GOPROXY) go install golang.org/x/tools/cmd/goimports
 
 generate:  ## run a go generate
@@ -36,3 +36,5 @@ vet:  deps ## run various linters and vetters
 
 help:  ## Show the help message
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' ./Makefile
+
+# golangci-lint run --build-tags="$BUILD_TAGS" -E depguard,errcheck,gocritic,gofmt,goimports,gosec,govet,ineffassign,nakedret,prealloc,typecheck,unconvert,unused "$project"

@@ -3,7 +3,7 @@ package http
 import (
 	"net/http"
 
-	"github.com/gsmcwhirter/go-util/v10/telemetry"
+	"github.com/gsmcwhirter/go-util/v11/telemetry"
 )
 
 //counterfeiter:generate . RoundTripper
@@ -26,9 +26,22 @@ func NewTelemeterRoundTripper(base http.RoundTripper, tel *telemetry.Telemeter, 
 	}
 }
 
-func (rt *TelemeterRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+func (rt *TelemeterRoundTripper) RoundTrip(req *http.Request) (resp *http.Response, err error) {
 	ctx, span := rt.tel.StartSpan(req.Context(), "http", "RoundTrip", rt.spanOpts...)
 	defer span.End()
+
+	defer func() {
+		if resp != nil {
+			span.SetAttributes(telemetry.HTTPAttributesFromHTTPStatusCode(resp.StatusCode)...)
+		}
+
+		if err != nil {
+			span.SetStatus(telemetry.CodeError, err.Error())
+		} else if resp != nil {
+			code, reason := telemetry.SpanStatusFromHTTPStatusCode(resp.StatusCode)
+			span.SetStatus(code, reason)
+		}
+	}()
 
 	return rt.base.RoundTrip(req.WithContext(ctx))
 }

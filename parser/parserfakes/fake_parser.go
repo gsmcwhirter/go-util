@@ -4,7 +4,7 @@ package parserfakes
 import (
 	"sync"
 
-	"github.com/gsmcwhirter/go-util/v10/parser"
+	"github.com/gsmcwhirter/go-util/v11/parser"
 )
 
 type FakeParser struct {
