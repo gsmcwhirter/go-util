@@ -52,7 +52,10 @@ type (
 	Tracer          = trace.Tracer
 )
 
-var WithAttributes = trace.WithAttributes
+var (
+	WithAttributes  = trace.WithAttributes
+	SpanFromContext = trace.SpanFromContext
+)
 
 type (
 	Meter         = metric.Meter
