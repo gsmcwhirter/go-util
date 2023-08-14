@@ -3,6 +3,8 @@ package http
 import (
 	"net/http"
 
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+
 	"github.com/gsmcwhirter/go-util/v11/telemetry"
 )
 
@@ -19,8 +21,10 @@ type TelemeterRoundTripper struct {
 var _ http.RoundTripper = (*TelemeterRoundTripper)(nil)
 
 func NewTelemeterRoundTripper(base http.RoundTripper, tel *telemetry.Telemeter, opts ...telemetry.StartSpanOption) *TelemeterRoundTripper {
+	propagateRT := otelhttp.NewTransport(base)
+
 	return &TelemeterRoundTripper{
-		base:     base,
+		base:     propagateRT,
 		tel:      tel,
 		spanOpts: opts,
 	}

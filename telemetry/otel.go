@@ -8,8 +8,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	"go.opentelemetry.io/otel/metric/global"
-	"go.opentelemetry.io/otel/metric/instrument"
+	"go.opentelemetry.io/otel/metric/embedded"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/resource"
 	sdkTrace "go.opentelemetry.io/otel/sdk/trace"
@@ -64,15 +63,15 @@ type (
 )
 
 type (
-	Int64Counter       = instrument.Int64Counter
-	Int64UpDownCounter = instrument.Int64UpDownCounter
-	Int64Histogram     = instrument.Int64Histogram
+	Int64Counter       = metric.Int64Counter
+	Int64UpDownCounter = metric.Int64UpDownCounter
+	Int64Histogram     = metric.Int64Histogram
 )
 
 type (
-	Float64Counter       = instrument.Float64Counter
-	Float64UpDownCounter = instrument.Float64UpDownCounter
-	Float64Histogram     = instrument.Float64Histogram
+	Float64Counter       = metric.Float64Counter
+	Float64UpDownCounter = metric.Float64UpDownCounter
+	Float64Histogram     = metric.Float64Histogram
 )
 
 type Telemeter struct { // trace.TracerProvider
@@ -81,6 +80,8 @@ type Telemeter struct { // trace.TracerProvider
 	traceExporter  SpanExporter
 	meterProvider  MeterProvider
 	propagator     propagation.TextMapPropagator
+
+	embedded.MeterProvider
 }
 
 var (
@@ -127,7 +128,7 @@ func (t *Telemeter) MakeDefault() {
 	otel.SetTracerProvider(t)
 	otel.SetTextMapPropagator(t.propagator)
 
-	global.SetMeterProvider(t)
+	otel.SetMeterProvider(t)
 }
 
 func (t *Telemeter) Shutdown(ctx context.Context) error {
