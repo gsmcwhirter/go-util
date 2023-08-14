@@ -229,7 +229,7 @@ func (c *TelemeterClient) prepareAndSendRequest(ctx context.Context, method, req
 
 	defer func() {
 		if httpResp != nil {
-			span.SetAttributes(telemetry.HTTPAttributesFromHTTPStatusCode(httpResp.StatusCode)...)
+			span.SetAttributes(telemetry.HTTPAttributesFromHTTPStatusCode(httpResp)...)
 		}
 
 		if err != nil {

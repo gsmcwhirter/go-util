@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-kit/log"       //nolint:depguard,staticcheck // uses this internally to do the logging
 	"github.com/go-kit/log/level" //nolint:depguard,staticcheck // uses this internally to do the logging
+	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
 
 	"github.com/gsmcwhirter/go-util/v11/errors"
 	"github.com/gsmcwhirter/go-util/v11/request"
@@ -168,7 +169,8 @@ func WithClientRequest(l Logger, req *http.Request) Logger {
 }
 
 func WithServerRequest(l Logger, req *http.Request, serverName, routeName string) Logger {
-	attrs := telemetry.HTTPServerAttributesFromHTTPRequest(serverName, routeName, req)
+	attrs := telemetry.HTTPServerAttributesFromHTTPRequest(serverName, req)
+	attrs = append(attrs, semconv.HTTPRouteKey.String(routeName))
 	return WithAttributes(l, attrs...)
 }
 

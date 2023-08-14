@@ -36,7 +36,7 @@ func (rt *TelemeterRoundTripper) RoundTrip(req *http.Request) (resp *http.Respon
 
 	defer func() {
 		if resp != nil {
-			span.SetAttributes(telemetry.HTTPAttributesFromHTTPStatusCode(resp.StatusCode)...)
+			span.SetAttributes(telemetry.HTTPAttributesFromHTTPStatusCode(resp)...)
 		}
 
 		if err != nil {
