@@ -2,6 +2,7 @@ package json
 
 import (
 	sj "github.com/segmentio/encoding/json"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/gsmcwhirter/go-util/v11/pool"
@@ -38,9 +39,9 @@ func MarshalToBuffer(i interface{}) ([]byte, error) {
 }
 
 func ProtoMarshalAppend(buf []byte, i proto.Message) ([]byte, error) {
-	return ProtoMarshalAppendOpts(buf, i, proto.MarshalOptions{})
+	return ProtoMarshalAppendOpts(buf, i, protojson.MarshalOptions{})
 }
 
-func ProtoMarshalAppendOpts(buf []byte, i proto.Message, opts proto.MarshalOptions) ([]byte, error) {
+func ProtoMarshalAppendOpts(buf []byte, i proto.Message, opts protojson.MarshalOptions) ([]byte, error) {
 	return opts.MarshalAppend(buf, i)
 }
