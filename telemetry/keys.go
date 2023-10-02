@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/otel/metric/noop"
 	"go.opentelemetry.io/otel/semconv/v1.20.0/httpconv"
 )
 
@@ -19,5 +20,6 @@ var (
 )
 
 func Handler(h http.Handler, name string, t *Telemeter) http.Handler {
-	return otelhttp.NewHandler(h, name, otelhttp.WithTracerProvider(t), otelhttp.WithMeterProvider(t))
+	// the otelhttp metrics are super high cardinality, so we just turn those off and do it manually elsewhere
+	return otelhttp.NewHandler(h, name, otelhttp.WithTracerProvider(t), otelhttp.WithMeterProvider(noop.NewMeterProvider()))
 }
