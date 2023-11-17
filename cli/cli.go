@@ -29,9 +29,10 @@ type CommandOptions struct {
 	Deprecated   string
 	Args         cobra.PositionalArgs
 
-	Aliases      []string
-	Hidden       bool
-	SilenceUsage bool
+	Aliases       []string
+	Hidden        bool
+	SilenceUsage  bool
+	SilenceErrors bool
 }
 
 // NoArgs is a possible CommandOptions.Args value that indicates that no positional
@@ -101,8 +102,9 @@ func NewCommand(cmdName string, opts CommandOptions) *Command {
 			Long:    opts.LongHelp,
 			Example: opts.Example,
 
-			Deprecated:   opts.Deprecated,
-			SilenceUsage: opts.SilenceUsage,
+			Deprecated:    opts.Deprecated,
+			SilenceUsage:  opts.SilenceUsage,
+			SilenceErrors: opts.SilenceErrors,
 
 			Args: opts.Args,
 
