@@ -27,7 +27,7 @@ type RetryOptions struct {
 	RetryMax     *int          // Maximum number of retries
 }
 
-type HTTPResponseError struct {
+type HTTPResponseError struct { //nolint:revive // ok with stutter
 	Repsonse *http.Response
 	Body     []byte
 	Cause    error
@@ -210,13 +210,13 @@ func (c *TelemeterClient) RequestBody(ctx context.Context, method, reqURL string
 	defer deferutil.CheckDeferLog(logger, httpResp.Body.Close)
 
 	if httpResp.StatusCode >= 400 {
-		body, errBody := io.ReadAll(httpResp.Body)
-		if errBody != nil {
-			logger.Err("could not read response body", errBody)
+		errBody, errBodyRead := io.ReadAll(httpResp.Body)
+		if errBodyRead != nil {
+			logger.Err("could not read response body", errBodyRead)
 		}
 		return nil, httpResp, &HTTPResponseError{
 			Repsonse: httpResp,
-			Body:     body,
+			Body:     errBody,
 		}
 	}
 

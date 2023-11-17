@@ -5,7 +5,7 @@ import (
 	"github.com/gsmcwhirter/go-util/v11/logging/level"
 )
 
-type HTTPLogger struct {
+type HTTPLogger struct { //nolint:revive // ok with stutter
 	Logger logging.Logger
 }
 

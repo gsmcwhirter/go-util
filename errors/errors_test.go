@@ -499,17 +499,65 @@ func TestNew(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		wantErr bool
+		wantMsg string
 	}{
-		// TODO: Add test cases.
+		{
+			name: "happy path",
+			args: args{
+				msg: "test msg",
+			},
+			wantMsg: "test msg",
+		},
 	}
 	for _, tt := range tests {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if err := New(tt.args.msg); (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+			err := New(tt.args.msg)
+			if err.Error() != tt.wantMsg {
+				t.Errorf("New() error = %v, wantMsg %s", err, tt.wantMsg)
+			}
+		})
+	}
+}
+
+func TestNewf(t *testing.T) {
+	t.Parallel()
+
+	type args struct {
+		msg  string
+		args []interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantMsg string
+	}{
+		{
+			name: "no format",
+			args: args{
+				msg: "test msg",
+			},
+			wantMsg: "test msg",
+		},
+		{
+			name: "formatted",
+			args: args{
+				msg:  "test %d %d %d",
+				args: []interface{}{1, 2, 3},
+			},
+			wantMsg: "test 1 2 3",
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			err := Newf(tt.args.msg, tt.args.args...)
+			if err.Error() != tt.wantMsg {
+				t.Errorf("Newf() error = %v, wantMsg %s", err, tt.wantMsg)
 			}
 		})
 	}

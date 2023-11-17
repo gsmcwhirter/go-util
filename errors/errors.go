@@ -115,6 +115,14 @@ func New(msg string) error {
 	}
 }
 
+func Newf(msg string, args ...interface{}) error {
+	return &errStruct{
+		msg:   fmt.Sprintf(msg, args...),
+		data:  nil,
+		cause: nil,
+	}
+}
+
 func Wrap(err error, msg string, data ...interface{}) error {
 	if err == nil {
 		return nil
