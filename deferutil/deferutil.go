@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gsmcwhirter/go-util/v11/logging"
-	"github.com/gsmcwhirter/go-util/v11/logging/level"
+	"github.com/gsmcwhirter/go-util/v12/logging"
+	"github.com/gsmcwhirter/go-util/v12/logging/level"
 )
 
 // CheckDefer is a wrapper for use with defer that will check error values returned and

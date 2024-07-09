@@ -5,7 +5,7 @@ import (
 	httpa "net/http"
 	"sync"
 
-	"github.com/gsmcwhirter/go-util/v11/http"
+	"github.com/gsmcwhirter/go-util/v12/http"
 )
 
 type FakeRoundTripper struct {

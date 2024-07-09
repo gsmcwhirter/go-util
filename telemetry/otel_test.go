@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
 
-	"github.com/gsmcwhirter/go-util/v11/json"
+	"github.com/gsmcwhirter/go-util/v12/json"
 )
 
 func TelemTest1(ctx context.Context, t *Telemeter) {

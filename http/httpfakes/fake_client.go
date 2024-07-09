@@ -8,7 +8,7 @@ import (
 
 	retryablehttp "github.com/hashicorp/go-retryablehttp"
 
-	"github.com/gsmcwhirter/go-util/v11/http"
+	"github.com/gsmcwhirter/go-util/v12/http"
 )
 
 type FakeClient struct {

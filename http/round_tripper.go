@@ -5,7 +5,7 @@ import (
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 
-	"github.com/gsmcwhirter/go-util/v11/telemetry"
+	"github.com/gsmcwhirter/go-util/v12/telemetry"
 )
 
 //counterfeiter:generate . RoundTripper

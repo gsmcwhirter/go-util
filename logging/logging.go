@@ -12,9 +12,9 @@ import (
 	"github.com/go-kit/log/level" //nolint:depguard,staticcheck // uses this internally to do the logging
 	semconv "go.opentelemetry.io/otel/semconv/v1.20.0"
 
-	"github.com/gsmcwhirter/go-util/v11/errors"
-	"github.com/gsmcwhirter/go-util/v11/request"
-	"github.com/gsmcwhirter/go-util/v11/telemetry"
+	"github.com/gsmcwhirter/go-util/v12/errors"
+	"github.com/gsmcwhirter/go-util/v12/request"
+	"github.com/gsmcwhirter/go-util/v12/telemetry"
 )
 
 // DefaultTimestampUTC is a passthrough to the go-kit object of the same name

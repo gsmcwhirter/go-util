@@ -3,7 +3,7 @@ package parser
 import (
 	"strings"
 
-	"github.com/gsmcwhirter/go-util/v11/errors"
+	"github.com/gsmcwhirter/go-util/v12/errors"
 )
 
 // ErrTokenizeError represents an error tokenizing where there was an opening quote without a paired closing

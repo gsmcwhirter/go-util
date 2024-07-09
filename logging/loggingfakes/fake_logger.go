@@ -4,7 +4,7 @@ package loggingfakes
 import (
 	"sync"
 
-	"github.com/gsmcwhirter/go-util/v11/logging"
+	"github.com/gsmcwhirter/go-util/v12/logging"
 )
 
 type FakeLogger struct {

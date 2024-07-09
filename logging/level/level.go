@@ -3,7 +3,7 @@ package level
 import (
 	"github.com/go-kit/log/level" //nolint:depguard,staticcheck // used to implement levels
 
-	"github.com/gsmcwhirter/go-util/v11/logging"
+	"github.com/gsmcwhirter/go-util/v12/logging"
 )
 
 func Debug(logger logging.Logger) logging.Logger {

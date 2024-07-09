@@ -9,11 +9,11 @@ import (
 
 	"github.com/hashicorp/go-retryablehttp"
 
-	"github.com/gsmcwhirter/go-util/v11/deferutil"
-	"github.com/gsmcwhirter/go-util/v11/errors"
-	"github.com/gsmcwhirter/go-util/v11/json"
-	"github.com/gsmcwhirter/go-util/v11/logging"
-	"github.com/gsmcwhirter/go-util/v11/telemetry"
+	"github.com/gsmcwhirter/go-util/v12/deferutil"
+	"github.com/gsmcwhirter/go-util/v12/errors"
+	"github.com/gsmcwhirter/go-util/v12/json"
+	"github.com/gsmcwhirter/go-util/v12/logging"
+	"github.com/gsmcwhirter/go-util/v12/telemetry"
 )
 
 type (

@@ -83,6 +83,7 @@ type Telemeter struct { // trace.TracerProvider
 	propagator     propagation.TextMapPropagator
 
 	embedded.MeterProvider
+	sdkTrace.TracerProvider
 }
 
 var (

@@ -1,8 +1,8 @@
 package http
 
 import (
-	"github.com/gsmcwhirter/go-util/v11/logging"
-	"github.com/gsmcwhirter/go-util/v11/logging/level"
+	"github.com/gsmcwhirter/go-util/v12/logging"
+	"github.com/gsmcwhirter/go-util/v12/logging/level"
 )
 
 type HTTPLogger struct { //nolint:revive // ok with stutter

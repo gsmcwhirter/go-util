@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/gsmcwhirter/go-util/v11/pool"
+	"github.com/gsmcwhirter/go-util/v12/pool"
 )
 
 type Unmarshaler interface {
