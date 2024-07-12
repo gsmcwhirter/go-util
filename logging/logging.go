@@ -107,6 +107,14 @@ func NewLogfmtLogger() Logger {
 	return NewFrom(log.NewLogfmtLogger(log.NewSyncWriter(os.Stdout)))
 }
 
+func NewJSONFileLogger(w io.Writer) Logger {
+	return NewFrom(log.NewJSONLogger(log.NewSyncWriter(w)))
+}
+
+func NewLogfmtFileLogger(w io.Writer) Logger {
+	return NewFrom(log.NewLogfmtLogger(log.NewSyncWriter(w)))
+}
+
 // WithLevel wraps a logger to filter out logs lower than the designated level
 func WithLevel(l Logger, levelStr string) Logger {
 	base := BaseFrom(l)
