@@ -10,7 +10,7 @@ GOPROXY ?= https://proxy.golang.org
 
 deps:  ## download dependencies
 	$Q GOPROXY=$(GOPROXY) go mod download
-	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.52.2
+	$Q GOPROXY=$(GOPROXY) go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.6.2
 	$Q GOPROXY=$(GOPROXY) go install golang.org/x/tools/cmd/goimports
 
 generate:  ## run a go generate
@@ -30,8 +30,9 @@ benchmark-json:
 vet:  deps ## run various linters and vetters
 	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do gofmt -s -w $$d/*.go; done'
 	$Q bash -c 'for d in $$(go list -f {{.Dir}} ./...); do goimports -w -local $(PROJECT) $$d/*.go; done'
-	$Q golangci-lint run -c .golangci.yml -E revive,gosimple,staticcheck ./...
-	$Q golangci-lint run -c .golangci.yml -E asciicheck,contextcheck,depguard,durationcheck,errcheck,errname,gocritic,gofumpt,goimports,gosec,govet,ineffassign,nakedret,paralleltest,prealloc,predeclared,typecheck,unconvert,unused,whitespace ./...
+	$Q golangci-lint fmt -c .golangci.yml -E gofumpt,goimports
+	$Q golangci-lint run -c .golangci.yml -E revive,staticcheck ./...
+	$Q golangci-lint run -c .golangci.yml -E asciicheck,contextcheck,depguard,durationcheck,errcheck,errname,gocritic,gosec,govet,ineffassign,nakedret,paralleltest,prealloc,predeclared,unconvert,unused,whitespace ./...
 	$Q golangci-lint run -c .golangci.yml -E godox ./... || true
 
 help:  ## Show the help message

@@ -23,8 +23,8 @@ func isQuote(char rune, quots []rune) bool {
 // sections and escapes
 func Tokenize(msg string, delim, escape rune, quots []rune) ([]string, error) {
 	msgR := []rune(msg)
-	max := strings.Count(msg, string(delim)) + 1
-	tokens := make([]string, 0, max)
+	maxCt := strings.Count(msg, string(delim)) + 1
+	tokens := make([]string, 0, maxCt)
 
 	buffer := make([]rune, 0, len(msgR))
 	var r rune

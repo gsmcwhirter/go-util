@@ -7,7 +7,7 @@ package tools
 // go.mod.
 
 import (
-	_ "github.com/golangci/golangci-lint/pkg/golinters" // for golangci-lint
+	_ "github.com/golangci/golangci-lint/v2/pkg/golinters" // for golangci-lint
 	_ "github.com/maxbrunsfeld/counterfeiter/v6"
 	_ "golang.org/x/tools/imports" // for goimports
 	// _ "github.com/mailru/easyjson"  // for easyjson

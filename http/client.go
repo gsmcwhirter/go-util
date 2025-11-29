@@ -250,7 +250,7 @@ func (c *TelemeterClient) prepareAndSendRequest(ctx context.Context, method, req
 	)
 
 	for _, opt := range opts {
-		if err := opt(req); err != nil {
+		if err = opt(req); err != nil {
 			return nil, errors.Wrap(err, "could not apply request options")
 		}
 	}

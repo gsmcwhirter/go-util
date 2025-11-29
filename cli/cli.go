@@ -111,7 +111,7 @@ func NewCommand(cmdName string, opts CommandOptions) *Command {
 			Aliases: opts.Aliases,
 			Hidden:  opts.Hidden,
 
-			RunE: func(cmd *cobra.Command, args []string) error {
+			RunE: func(cmd *cobra.Command, _ []string) error {
 				return cmd.Help()
 			},
 		},
